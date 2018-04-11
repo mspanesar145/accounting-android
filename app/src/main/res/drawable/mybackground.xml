@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="radial" android:gradientRadius="1000"
+                android:startColor="#076daf"
+                android:endColor="#080808" />
+
+        </shape>
+    </item>
+    <item>
+        <bitmap
+            android:src="@drawable/login_bg"
+            android:tileMode="repeat" />
+    </item>
+</layer-list>
