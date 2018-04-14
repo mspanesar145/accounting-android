@@ -21,7 +21,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/top_banner"
+            android:layout_below="@+id/top_bannejanr"
             android:layout_marginLeft="40dp"
             android:layout_marginRight="40dp"
             android:gravity="center"
@@ -68,7 +68,7 @@
                     android:drawableLeft="@drawable/mobile_icon"
                     android:drawablePadding="5dp"
                     android:hint="Mobile Number"
-                    android:inputType="textPassword"
+                    android:inputType="number"
                     android:textColor="@android:color/white"
                     android:textColorHint="#cccccc" />
 

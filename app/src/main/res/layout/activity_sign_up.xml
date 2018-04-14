@@ -9,7 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/mybackground"
-        android:orientation="vertical"
         tools:context=".activity.SignUpActivity">
 
         <RelativeLayout
@@ -42,7 +41,6 @@
             android:layout_height="150dp"
             android:layout_below="@+id/rl_header"
             android:background="@drawable/header_bg">
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
@@ -72,9 +70,11 @@
         </RelativeLayout>
 
         <RelativeLayout
-                    android:layout_below="@+id/rl_banner_image"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
+                android:id="@+id/rl_form_content"
+                android:layout_below="@+id/rl_banner_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/rl_footer">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -185,19 +185,26 @@
 
                         />
 
-                    <Button
-                        android:id="@+id/bt_signup"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
-                        android:layout_marginLeft="50dp"
-                        android:layout_marginRight="50dp"
-                        android:layout_marginTop="20dp"
-                        android:background="@drawable/button_design"
-                        android:text="Sign Up"
-                        android:textColor="@android:color/white" />
 
                 </LinearLayout>
             </RelativeLayout>
-        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_footer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true">
+
+            <Button
+            android:id="@+id/bt_signup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/button_design"
+            android:text="Sign Up"
+            android:textColor="@android:color/white" /></RelativeLayout>
+    </RelativeLayout>
 </ScrollView>
