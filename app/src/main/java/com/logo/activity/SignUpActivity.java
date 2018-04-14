@@ -102,7 +102,7 @@ public class SignUpActivity extends LogoActivity  {
         editTextMobile = (EditText) findViewById(R.id.et_mobile);
         editTextEmail = (EditText) findViewById(R.id.et_email);
         editTextCity = (EditText) findViewById(R.id.et_city);
-        editTextPassword = (EditText) findViewById(R.id.et_password);
+        //editTextPassword = (EditText) findViewById(R.id.et_password);
         imageViewBack = (ImageView) findViewById(R.id.iv_back);
         buttonSignUp = (Button) findViewById(R.id.bt_signup);
 
