@@ -283,7 +283,7 @@ public class SignUpActivity extends LogoActivity  {
                             }
 
                             userManager.addUser(user);
-                            startActivity(new Intent(context,MainActivity.class));
+                            startActivity(new Intent(context,LoginActivity.class));
                             finish();
                         }
                     }

@@ -34,7 +34,7 @@ public class SplashActivity extends LogoActivity {
             public void run() {
 
                 if(userManager.isUserExist()){
-                    startActivity(new Intent(SplashActivity.this,MainActivity.class));
+                    startActivity(new Intent(SplashActivity.this,HomeActivity.class));
                     finish();
                 }else{
                     startActivity(new Intent(SplashActivity.this,LoginActivity.class));

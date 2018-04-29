@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@drawable/mybackground">
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="fill_parent">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/mybackground"
+        android:background="@color/white"
+        android:orientation="vertical"
         tools:context=".activity.SignUpActivity">
-
         <RelativeLayout
             android:id="@+id/rl_header"
             android:layout_width="match_parent"
@@ -73,8 +70,9 @@
                 android:id="@+id/rl_form_content"
                 android:layout_below="@+id/rl_banner_image"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@+id/rl_footer">
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/rl_footer"
+                >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -192,7 +190,7 @@
         <RelativeLayout
             android:id="@+id/rl_footer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true">
 
             <Button
@@ -206,5 +204,5 @@
             android:background="@drawable/button_design"
             android:text="Sign Up"
             android:textColor="@android:color/white" /></RelativeLayout>
-    </RelativeLayout>
+</LinearLayout>
 </ScrollView>

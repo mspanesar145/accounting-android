@@ -24,4 +24,14 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_sign_up">Sign in</string>
+    <string name="title_activity_profile">Sign in</string>
+
+
+    <string-array name="catogries">
+        <item>Category 1</item>
+        <item>Category 2</item>
+        <item>Category 3</item>
+        <item>Category 4</item>
+        <item>Category 5</item>
+    </string-array>
 </resources>

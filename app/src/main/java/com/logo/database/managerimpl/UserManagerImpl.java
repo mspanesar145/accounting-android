@@ -24,7 +24,7 @@ public class UserManagerImpl implements UserManager{
     public void addUser(User user) {
         // TODO Auto-generated method stub
         sqLiteDatabase.execSQL("insert into table_user values('" + user.getUsername()
-                + "' , '" + user.getEmail() + "','"+user.getUserId()+"','"+user.getAuthToken()+"')");
+                + "' , '" + user.getEmail() + "','"+user.getUserId()+"','"+user.getAuthToken()+"','"+user.getFirstName()+"','"+user.getLastName()+"')");
     }
 
     @Override
@@ -46,6 +46,8 @@ public class UserManagerImpl implements UserManager{
             user.setEmail(cursor.getString(cursor.getColumnIndex("email")));
             user.setUserId(cursor.getInt(cursor.getColumnIndex("userId")));
             user.setAuthToken(cursor.getString(cursor.getColumnIndex("token")));
+            user.setFirstName(cursor.getString(cursor.getColumnIndex("firstName")));
+            user.setLastName(cursor.getString(cursor.getColumnIndex("lastName")));
             return user;
         }
         return user;

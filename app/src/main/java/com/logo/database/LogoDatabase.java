@@ -35,7 +35,7 @@ public class LogoDatabase {
         @Override
         public void onCreate(SQLiteDatabase db) {
             // TODO Auto-generated method stub
-            db.execSQL("create table if not exists table_user (username text,email text, userId int,token text)");
+            db.execSQL("create table if not exists table_user (username text,email text, userId int,token text,firstName text, lastName text)");
         }
 
         @Override

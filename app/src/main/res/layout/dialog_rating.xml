@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+    <RelativeLayout
+        android:id="@+id/rl_dialog_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <TextView
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Rate This"
+            android:textSize="18dp"
+            android:textColor="@color/black"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/rl_overall_rating"
+        android:layout_below="@+id/rl_dialog_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <TextView
+            android:gravity="center"
+            android:id="@+id/tv_overall_rating_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14dp"/>
+    </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/ll_rating_stars"
+        android:layout_below="@+id/rl_overall_rating"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="5"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/iv_rating_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/star_white"
+            android:padding="5dp"/>
+
+        <ImageView
+            android:id="@+id/iv_rating_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/star_white"
+            android:padding="5dp"/>
+
+        <ImageView
+            android:id="@+id/iv_rating_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/star_white"
+            android:padding="5dp"/>
+
+        <ImageView
+            android:id="@+id/iv_rating_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/star_white"
+            android:padding="5dp"/>
+
+        <ImageView
+            android:id="@+id/iv_rating_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/star_white"
+            android:padding="5dp"/>
+
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_below="@+id/ll_rating_stars"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/bt_rating_ok"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ok"
+            android:background="@drawable/button_curve_edges"/>
+    </RelativeLayout>
+</RelativeLayout>

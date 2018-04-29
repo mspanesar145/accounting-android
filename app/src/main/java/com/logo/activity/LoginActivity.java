@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 
 import android.support.annotation.NonNull;
@@ -216,6 +217,18 @@ public class LoginActivity extends LogoActivity  {
                                 user.setUserId(0);
                             }
 
+                            if(jsonObject.has(user.FIRSTNAME)){
+                                user.setFirstName(jsonObject.getString(user.FIRSTNAME));
+                            }else{
+                                user.setFirstName("");
+                            }
+
+                            if(jsonObject.has(user.LASTNAME)){
+                                user.setLastName(jsonObject.getString(user.LASTNAME));
+                            }else{
+                                user.setLastName("");
+                            }
+
                             if(jsonObject.has(user.USERNAME)){
                                 user.setUsername(jsonObject.getString(user.USERNAME));
                             }else{
@@ -229,7 +242,17 @@ public class LoginActivity extends LogoActivity  {
                             }
 
                             userManager.addUser(user);
-                            startActivity(new Intent(context,MainActivity.class));
+
+                            if (jsonObject.has("myAccounts") && jsonObject.getJSONArray("myAccounts").length() == 0) {
+                                SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = pref.edit();
+                                editor.putBoolean("myAccountExists", false);           // Saving boolean - true/false
+                                editor.commit(); // commit changes
+
+                                startActivity(new Intent(context,MyAccountActivity.class));
+                            } else {
+                                startActivity(new Intent(context,HomeActivity.class));
+                            }
                             finish();
                         }
                     }
