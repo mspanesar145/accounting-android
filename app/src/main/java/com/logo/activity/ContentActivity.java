@@ -34,6 +34,7 @@ import com.logo.services.manager.InternetManager;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 /**
  * Created by mandeep on 23/4/18.
@@ -239,6 +240,8 @@ public class ContentActivity extends LogoActivity {
                 holder.tvContentTitle = (TextView)convertView.findViewById(R.id.tv_content_title);
                 holder.tvContentDesc = (TextView)convertView.findViewById(R.id.tv_content_desc);
                 holder.btRate = (Button) convertView.findViewById(R.id.bt_rate);
+                holder.tvContentShare = (ImageView) convertView.findViewById(R.id.iv_content_share);
+
                 convertView.setTag(holder);
             } else {
                 holder = (ContentSectionHolder) convertView.getTag();
@@ -275,6 +278,21 @@ public class ContentActivity extends LogoActivity {
                     }
                 });
 
+                holder.tvContentShare.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent whatsappIntent = new Intent(Intent.ACTION_SEND);
+                        whatsappIntent.setType("text/plain");
+                        whatsappIntent.setPackage("com.whatsapp");
+                        whatsappIntent.putExtra(Intent.EXTRA_TEXT, "http://download.com");
+                        try {
+                            contentActivity.startActivity(whatsappIntent);
+                        } catch (android.content.ActivityNotFoundException ex) {
+                            Toast.makeText(contentActivity,"Whatsapp have not been installed.",Toast.LENGTH_SHORT);
+                        }
+                    }
+                });
+
             } catch (Exception e) {
 
             }
@@ -282,9 +300,10 @@ public class ContentActivity extends LogoActivity {
         }
 
         class ContentSectionHolder {
-            ImageView ivContentImage;
+            ImageView ivContentImage,tvContentShare;
             TextView tvContentTitle,tvContentDesc;
             Button btRate;
+
 
         }
     }

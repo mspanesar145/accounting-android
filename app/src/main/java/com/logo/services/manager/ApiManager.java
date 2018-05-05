@@ -19,6 +19,6 @@ public interface ApiManager {
     public JSONObject findMyAccountByCreatedById(String queryStr);
     public JSONObject saveDocumentRating(JSONObject postData);
     public JSONArray findMainCategories();
-    public JSONArray findSubCatgories(String queryStr);
+    public JSONArray findSubCatgories();
 
 }

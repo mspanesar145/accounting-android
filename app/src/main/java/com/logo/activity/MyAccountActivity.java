@@ -3,6 +3,7 @@ package com.logo.activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -28,6 +29,7 @@ import com.logo.services.manager.ApiManager;
 import com.logo.services.manager.DeviceManager;
 import com.logo.services.manager.InternetManager;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
@@ -76,44 +78,21 @@ public class MyAccountActivity extends LogoActivity {
 
     public void variablesInit() {
 
-        categoryMap = new HashMap<>();
-        categoryMap.put("Category 1",1);
-        categoryMap.put("Category 2",2);
-        categoryMap.put("Category 3",3);
-        categoryMap.put("Category 4",4);
-        categoryMap.put("Category 5",5);
-
-        subCategoryMap =  new HashMap<>();
-        subCategoryMap.put("Sub Category 1",1);
-        subCategoryMap.put("Sub Category 2",2);
-        subCategoryMap.put("Sub Category 3",3);
-        subCategoryMap.put("Sub Category 4",4);
-        subCategoryMap.put("Sub Category 5",5);
-
-        //create a list of items for the spinner.
-        items = new String[]{"Select","Category 1","Category 2","Category 3","Category 4","Category 5"};
-
-        //create an adapter to describe how the items are displayed, adapters are used in several places in android.
-        //There are multiple variations of this, but this is the basic variant.
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
-        //set the spinners adapter to the previously created one.
-        mainSpinner.setAdapter(adapter);
-
-        //create a list of items for the spinner.
-        subItems = new String[]{"Select","Sub Category 1","Sub Category 2","Sub Category 3","Sub Category 4","Sub Category 5"};
-        //create an adapter to describe how the items are displayed, adapters are used in several places in android.
-        //There are multiple variations of this, but this is the basic variant.
-        ArrayAdapter<String> subAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, subItems);
-        //set the spinners adapter to the previously created one.
-        secondarySpinner.setAdapter(subAdapter);
-
+        myAccountJSON = new JSONObject();
         user = userManager.getUser();
         if (user != null) {
             tvUsername.setText(user.getFirstName()+" "+user.getLastName());
             tvEmail.setText(user.getEmail());
         }
 
-        new FetchMyAccountProcess().execute();
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
+        if (!pref.getBoolean("myAccountExists",false))  {
+            new CategoriesTask().execute();
+            new SubCatgoriesTask().execute();
+        } else {
+            new FetchMyAccountProcess().execute();
+        }
+
 
     }
     public void init() {
@@ -157,6 +136,12 @@ public class MyAccountActivity extends LogoActivity {
     View.OnClickListener bottomContentListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
+            boolean prefrenceExits = pref.getBoolean("myAccountExists",false);
+            if (!prefrenceExits)  {
+                Toast.makeText(getApplicationContext(),"Please save your data first",Toast.LENGTH_LONG).show();
+                return;
+            }
             startActivity(new Intent(context,ContentActivity.class));
             finish();
         }
@@ -165,6 +150,11 @@ public class MyAccountActivity extends LogoActivity {
     View.OnClickListener bottomProfileListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
+            if (!pref.getBoolean("myAccountExists",false))  {
+                Toast.makeText(getApplicationContext(),"Please save your data first",Toast.LENGTH_LONG).show();
+                return;
+            }
             startActivity(new Intent(context,ProfileActivity.class));
             finish();
         }
@@ -173,6 +163,12 @@ public class MyAccountActivity extends LogoActivity {
     View.OnClickListener bottomHomeListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+            SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
+            if (!pref.getBoolean("myAccountExists",false))  {
+                Toast.makeText(getApplicationContext(),"Please save your data first",Toast.LENGTH_LONG).show();
+                return;
+            }
             startActivity(new Intent(context,HomeActivity.class));
             finish();
         }
@@ -240,7 +236,12 @@ public class MyAccountActivity extends LogoActivity {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             System.out.println(position);
             try {
-                myAccountJSON.put("mainCourseId",mainSpinner.getItemIdAtPosition(position));
+                if (myAccountJSON != null) {
+                    myAccountJSON.put("mainCourseId",mainSpinner.getItemIdAtPosition(position));
+                    /*new SubCatgoriesTask().execute(myAccountJSON.getInt("mainCourseId"));*/
+                    populateSubCategories();
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -295,6 +296,12 @@ public class MyAccountActivity extends LogoActivity {
             try {
                 if (jsonObject != null) {
                     Toast.makeText(MyAccountActivity.this,"My Account Saved.!",Toast.LENGTH_SHORT).show();
+
+                    SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putBoolean("myAccountExists", true);           // Saving boolean - true/false
+                    editor.commit();
+
                     startActivity(new Intent(MyAccountActivity.this,HomeActivity.class));
                     finish();
                 } else {
@@ -333,8 +340,41 @@ public class MyAccountActivity extends LogoActivity {
 
             try {
                 if (jsonObject != null) {
+                    SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putBoolean("myAccountExists", true);           // Saving boolean - true/false
+                    editor.commit(); // commit changes
+
                     myAccountJSON = jsonObject;
+
+
+                    if (categoryMap == null) {
+                        categoryMap = new HashMap<>();
+                        categoryMap.put("Select Category",0);
+                    }
+                    JSONArray categoriesArray = new JSONArray(pref.getString("categories", ""));           // Saving boolean - true/false
+
+                    items = new String[categoriesArray.length()+1];
+                    items[0] = "Select Category";
+                    for (int i=0; i<categoriesArray.length(); i++) {
+                        JSONObject categoryObj = categoriesArray.getJSONObject(i);
+                        try {
+                            categoryMap.put(categoryObj.getString("name"),categoryObj.getInt("profileCategoryId"));
+                            items[i+1] = categoryObj.getString("name");
+                            //create an adapter to describe how the items are displayed, adapters are used in several places in android.
+                            //There are multiple variations of this, but this is the basic variant.
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        ArrayAdapter<String> subAdapter = new ArrayAdapter<>(MyAccountActivity.this, android.R.layout.simple_spinner_dropdown_item, items);
+                        //set the spinners adapter to the previously created one.
+                        mainSpinner.setAdapter(subAdapter);
+                    }
+
+                    populateSubCategories();
+
                     populateMyAccountData(myAccountJSON);
+
                 } else {
                     myAccountJSON = new JSONObject();
                 }
@@ -364,6 +404,7 @@ public class MyAccountActivity extends LogoActivity {
 
         for (Map.Entry subCategoryEntryMap : subCategoryMap.entrySet()) {
             try {
+                Integer courseId = (Integer)myAccountJSON.getInt("secondryCourseId");
                 if (subCategoryEntryMap.getValue() == (Integer)myAccountJSON.getInt("secondryCourseId")) {
                     for (int position=0; position < subItems.length; position++) {
                         if (subCategoryEntryMap.getKey().equals(subItems[position])) {
@@ -383,5 +424,162 @@ public class MyAccountActivity extends LogoActivity {
             e.printStackTrace();
         }
 
+    }
+
+    class CategoriesTask extends AsyncTask<JSONObject, JSONArray, JSONArray> {
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(context, "", "Please wait...", true);
+
+            //progressDialog.show();
+
+        }
+        @Override
+        protected JSONArray doInBackground(JSONObject... jsonObjects) {
+            return apiManager.findMainCategories();
+        }
+
+        @Override
+        protected void onPostExecute(JSONArray jsonArray) {
+            super.onPostExecute(jsonArray);
+            if(progressDialog!=null) {
+                progressDialog.dismiss();
+                progressDialog = null;
+            }
+
+            try {
+                if (jsonArray != null && jsonArray.length() > 0) {
+                    System.out.print(jsonArray);
+                    try {
+                        categoryMap =  new HashMap<>();
+
+                        if (jsonArray != null && jsonArray.length() > 0) {
+                            System.out.print(jsonArray);
+
+                            SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = pref.edit();
+                            editor.putString("categories", jsonArray.toString());           // Saving boolean - true/false
+                            editor.commit();
+
+                            String[] items = new String[jsonArray.length()+1];
+                            items[0] = "Select Category";
+                            for (int i=0; i<jsonArray.length(); i++) {
+                                JSONObject subCategiryObj = jsonArray.getJSONObject(i);
+                                try {
+                                    categoryMap.put(subCategiryObj.getString("name"),subCategiryObj.getInt("profileCategoryId"));
+                                    items[i+1] = subCategiryObj.getString("name");
+                                    //create an adapter to describe how the items are displayed, adapters are used in several places in android.
+                                    //There are multiple variations of this, but this is the basic variant.
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                ArrayAdapter<String> subAdapter = new ArrayAdapter<>(MyAccountActivity.this, android.R.layout.simple_spinner_dropdown_item, items);
+                                //set the spinners adapter to the previously created one.
+                                mainSpinner.setAdapter(subAdapter);
+                            }
+                        } else {
+                            //alertManager.alert("Something wrong", "Server error", context, null);
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    //alertManager.alert("Something wrong", "Server error", context, null);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    class SubCatgoriesTask extends AsyncTask<Integer, JSONArray, JSONArray> {
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(context, "", "Please wait...", true);
+
+            //progressDialog.show();
+
+        }
+        @Override
+        protected JSONArray doInBackground(Integer... longs) {
+            //Integer parentCategoryId = longs[0];
+            return apiManager.findSubCatgories();
+        }
+
+        @Override
+        protected void onPostExecute(JSONArray jsonArray) {
+            super.onPostExecute(jsonArray);
+            if(progressDialog!=null) {
+                progressDialog.dismiss();
+                progressDialog = null;
+            }
+
+            try {
+                subCategoryMap =  new HashMap<>();
+
+                if (jsonArray != null && jsonArray.length() > 0) {
+                    System.out.print(jsonArray);
+
+                    SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("subCategories", jsonArray.toString());           // Saving boolean - true/false
+                    editor.commit();
+
+                } else {
+                    //alertManager.alert("Something wrong", "Server error", context, null);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void populateSubCategories() {
+        try {
+            if (subCategoryMap == null) {
+                subCategoryMap = new HashMap<>();
+                subCategoryMap.put("Select SubCategory",0);
+            }
+            SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
+            JSONArray subCategoriesArray = new JSONArray(pref.getString("subCategories",""));
+            if (subCategoriesArray != null) {
+                JSONArray selectedCategoriesArray = new JSONArray();
+                for (int i=0; i< subCategoriesArray.length(); i++) {
+                    JSONObject subCategoryObj = subCategoriesArray.getJSONObject(i);
+                    if (subCategoryObj.getInt("parentCategoryId") == myAccountJSON.getInt("mainCourseId")) {
+                        selectedCategoriesArray.put(subCategoryObj);
+                    }
+                }
+                subItems = new String[selectedCategoriesArray.length()+1];
+                subItems[0] = "Select SubCategory";
+                for (int i=0; i<selectedCategoriesArray.length(); i++) {
+                    JSONObject subCategiryObj = selectedCategoriesArray.getJSONObject(i);
+                    try {
+                        subCategoryMap.put(subCategiryObj.getString("name"),subCategiryObj.getInt("profileCategoryId"));
+                        subItems[i+1] = subCategiryObj.getString("name");
+                        //create an adapter to describe how the items are displayed, adapters are used in several places in android.
+                        //There are multiple variations of this, but this is the basic variant.
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    ArrayAdapter<String> subAdapter = new ArrayAdapter<>(MyAccountActivity.this, android.R.layout.simple_spinner_dropdown_item, subItems);
+                    //set the spinners adapter to the previously created one.
+                    secondarySpinner.setAdapter(subAdapter);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

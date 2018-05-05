@@ -392,7 +392,7 @@ public class HomeActivity extends LogoActivity  {
 
             TextView textView = new TextView(this);
             textView.setLayoutParams(textViewLayoutParams);
-            textView.setTextSize(LogoUtils.convertDpToPixel(14,getApplicationContext()));
+            textView.setTextSize(LogoUtils.convertDpToPixel(12,getApplicationContext()));
             textView.setText("No Links Uploaded Yet");
             llVideoSection.setGravity(View.TEXT_ALIGNMENT_CENTER);
             llVideoSection.addView(textView);
@@ -452,7 +452,7 @@ public class HomeActivity extends LogoActivity  {
 
             TextView textView = new TextView(this);
             textView.setLayoutParams(textViewLayoutParams);
-            textView.setTextSize(LogoUtils.convertDpToPixel(14,getApplicationContext()));
+            textView.setTextSize(LogoUtils.convertDpToPixel(12,getApplicationContext()));
             textView.setText("No Documents Uploaded Yet");
             linearLayout.setGravity(View.TEXT_ALIGNMENT_CENTER);
             linearLayout.addView(textView);

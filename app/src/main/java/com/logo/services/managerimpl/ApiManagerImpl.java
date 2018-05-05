@@ -31,7 +31,7 @@ public class ApiManagerImpl implements ApiManager {
     public String findBlogsApi = "/find/allContentUserDocumentsForNullPdfAndCategoryIdSubCategoryId";
     public String findMyAccountByCreatedById = "/find/myAccountByCreatedById";
     public String saveDoumentRating="/save/documentRating";
-    public String findMainCategories="/save/categories";
+    public String findMainCategories="/find/categories";
     public String findSubCategories="/find/subCategories";
 
 
@@ -153,10 +153,10 @@ public class ApiManagerImpl implements ApiManager {
         return null;
     }
 
-    public JSONArray findSubCatgories(String queryStr) {
+    public JSONArray findSubCatgories() {
         try {
             JsonParsing jsonParsing = new JsonParsing();
-            String url = servarUrl+findSubCategories+queryStr;
+            String url = servarUrl+findSubCategories;
             return jsonParsing.httpGet(url,null);
         } catch (Exception e) {
             e.printStackTrace();

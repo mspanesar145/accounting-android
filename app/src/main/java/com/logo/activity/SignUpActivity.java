@@ -247,6 +247,17 @@ public class SignUpActivity extends LogoActivity  {
         protected Object doInBackground(Object... objects) {
             JSONObject jsonObject = null;
 
+
+
+
+
+
+
+
+
+
+
+
             jsonObject = apiManager.signUpApi(user);
 
             return jsonObject;
