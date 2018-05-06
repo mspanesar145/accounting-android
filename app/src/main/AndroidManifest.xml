@@ -57,6 +57,9 @@
         <activity
             android:name=".activity.ContentActivity"
             android:label="Content Activity"></activity>
+        <activity
+            android:name=".activity.WebViewActivity"
+            android:label="Webview Activity"></activity>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

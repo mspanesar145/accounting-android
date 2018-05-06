@@ -21,7 +21,7 @@ public class FullScreenDialog extends DialogFragment {
 
     public static final String TAG = "FullScreenDialog";
 
-    TextView tvContentDescription;
+    TextView tvContentDescription,tvContentTitle;
     JSONObject dialogData;
     public FullScreenDialog() {
 
@@ -43,7 +43,8 @@ public class FullScreenDialog extends DialogFragment {
         Dialog dialog = getDialog();
         if (dialog != null) {
             try {
-                dialog.setTitle(dialogData.getString("title"));
+                //dialog.
+                tvContentTitle.setText(dialogData.getString("title"));
                 tvContentDescription.setText(dialogData.getString("content"));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -62,7 +63,7 @@ public class FullScreenDialog extends DialogFragment {
 
         View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_content, parent, false);
         tvContentDescription = (TextView) view.findViewById(R.id.tv_content_desc);
-
+        tvContentTitle = (TextView) view.findViewById(R.id.tv_content_title);
         return view;
     }
 

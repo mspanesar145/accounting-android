@@ -431,9 +431,16 @@ public class HomeActivity extends LogoActivity  {
 
                         try {
                             String url = jsonObject.getString("contentLinkUrl");
-                            Intent i = new Intent(Intent.ACTION_VIEW);
-                            i.setData(Uri.parse(url));
-                            startActivity(i);
+                            //Intent i = new Intent(Intent.ACTION_VIEW);
+                            //i.setData(Uri.parse(url));
+                            //startActivity(i);
+                            /*webView = (WebView) findViewById(R.id.webview);
+                            webView.setVisibility(View.VISIBLE);
+                            webView.getSettings().setJavaScriptEnabled(true);
+                            webView.loadUrl(url);*/
+                            Intent webview = new Intent(HomeActivity.this,WebViewActivity.class);
+                            webview.putExtra("url",url);
+                            startActivity(webview);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

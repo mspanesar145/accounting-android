@@ -37,7 +37,7 @@ public class SplashActivity extends LogoActivity {
                     startActivity(new Intent(SplashActivity.this,HomeActivity.class));
                     finish();
                 }else{
-                    startActivity(new Intent(SplashActivity.this,LoginActivity.class));
+                    startActivity(new Intent(SplashActivity.this,LogoActivity.class));
                     finish();
                 }
             }

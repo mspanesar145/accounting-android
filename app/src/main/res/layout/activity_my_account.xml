@@ -306,7 +306,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="2dp"
-                    android:text="PROFILE"
+                    android:text="UPLOAD"
                     android:textSize="10dp" />
             </LinearLayout>
 
@@ -315,7 +315,6 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@color/cyan"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -323,14 +322,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="2dp"
-                    android:src="@drawable/setting_icon_white" />
+                    android:src="@drawable/setting_icon_black" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="2dp"
-                    android:text="SETTINGS"
-                    android:textColor="@color/white"
+                    android:text="MY ACCOUNT"
                     android:textSize="10dp" />
             </LinearLayout>
 

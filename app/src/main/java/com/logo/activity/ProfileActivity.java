@@ -243,7 +243,7 @@ public class ProfileActivity extends LogoActivity {
                 if (ContextCompat.checkSelfPermission(getLogoApplication(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
                 } else {
-                    Intent cameraIntent = new Intent(Intent.ACTION_GET_CONTENT,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    Intent cameraIntent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     //cameraIntent.setType("image/*");
                     //cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI.getPath());
                     startActivityForResult(cameraIntent, PICK_IMAGE);
@@ -284,11 +284,14 @@ public class ProfileActivity extends LogoActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Intent cameraIntent = new Intent(Intent.ACTION_GET_CONTENT,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
             if ("image".equals(uploadType)) {
+                Intent cameraIntent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
                 startActivityForResult(cameraIntent, PICK_IMAGE);
             } else if ("content".equals(uploadType)) {
+                Intent cameraIntent = new Intent(Intent.ACTION_GET_CONTENT,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
                 startActivityForResult(cameraIntent, PICK_CONTENT);
             }
         }
@@ -353,7 +356,7 @@ public class ProfileActivity extends LogoActivity {
         if (requestCode == PICK_IMAGE) {
             //Bitmap image = (Bitmap) data.getExtras().get("data");
             Uri imageUri = data.getData();
-            /*Bitmap bitmap = null;
+            Bitmap bitmap = null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
             } catch (IOException e) {
@@ -366,8 +369,8 @@ public class ProfileActivity extends LogoActivity {
                 imageCoverFile = new File(filePath);
             } catch (Exception e) {
                 e.printStackTrace();
-            }*/
-            String[] projection = {MediaStore.Images.Media.DATA};
+            }
+            /*String[] projection = {MediaStore.Images.Media.DATA};
 
             Cursor cursor = getContentResolver().query(imageUri, projection, null, null, null);
             cursor.moveToFirst();
@@ -383,12 +386,14 @@ public class ProfileActivity extends LogoActivity {
                 imageCoverFile = new File(filePath);
             } catch (Exception e) {
                 e.printStackTrace();
-            }
+            }*/
             //Drawable drawable = new BitmapDrawable(bitmap);
             //imageView.setBackground(drawable);
         } else if (requestCode == PICK_CONTENT) {
             //Bitmap image = (Bitmap) data.getExtras().get("data");
             Uri imageUri = data.getData();
+
+            System.out.println(ImageUtils.getPath(context,imageUri));
             String[] projection = {MediaStore.Images.Media.DATA};
 
             Cursor cursor = getContentResolver().query(imageUri, projection, null, null, null);

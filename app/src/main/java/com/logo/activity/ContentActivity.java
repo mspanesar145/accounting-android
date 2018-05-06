@@ -99,8 +99,10 @@ public class ContentActivity extends LogoActivity {
             Long createdById = receiverIntent.getLongExtra("createdById",user.getUserId());
             new ContentProcess().execute(createdById);
         } else {
-            Long userId = Long.valueOf(user.getUserId());
-            new ContentProcess().execute(userId);
+            if (user != null) {
+                Long userId = Long.valueOf(user.getUserId());
+                new ContentProcess().execute(userId);
+            }
         }
 
 
