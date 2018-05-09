@@ -20,5 +20,6 @@ public interface ApiManager {
     public JSONObject saveDocumentRating(JSONObject postData);
     public JSONArray findMainCategories();
     public JSONArray findSubCatgories();
+    public JSONObject facebookSignInApi(JSONObject postData);
 
 }

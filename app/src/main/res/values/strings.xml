@@ -3,6 +3,9 @@
     <string name="title_activity_logo">Logo</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_login">Sign in</string>
+    <!--Facebook App Id-->
+    <string name="facebook_app_id">1800088453391367</string>
+    <string name="fb_login_protocol_scheme">fb1800088453391367</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

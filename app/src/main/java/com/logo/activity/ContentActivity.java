@@ -67,6 +67,7 @@ public class ContentActivity extends LogoActivity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);
+        NavigtionCreate();
         init();
     }
 
@@ -86,7 +87,7 @@ public class ContentActivity extends LogoActivity {
 
         llBottomMyAccount = (LinearLayout) findViewById(R.id.ll_my_settings);
         llBottomProfile = (LinearLayout) findViewById(R.id.ll_bottom_profile);
-        llBottomHome = (LinearLayout) findViewById(R.id.ll_bottom_home  );
+        llBottomHome = (LinearLayout) findViewById(R.id.ll_bottom_home);
 
         llBottomProfile.setOnClickListener(bottomProfileListener);
         llBottomMyAccount.setOnClickListener(bottomMySettingListener);
@@ -96,7 +97,7 @@ public class ContentActivity extends LogoActivity {
 
         Intent receiverIntent = getIntent();
         if (receiverIntent.hasExtra("createdById")) {
-            Long createdById = receiverIntent.getLongExtra("createdById",user.getUserId());
+            Long createdById = receiverIntent.getLongExtra("createdById", user.getUserId());
             new ContentProcess().execute(createdById);
         } else {
             if (user != null) {
@@ -106,7 +107,7 @@ public class ContentActivity extends LogoActivity {
         }
 
 
-   }
+    }
 
     View.OnClickListener bottomProfileListener = new View.OnClickListener() {
         @Override
@@ -134,6 +135,7 @@ public class ContentActivity extends LogoActivity {
 
     class ContentProcess extends AsyncTask<Long, JSONArray, JSONArray> {
         ProgressDialog progressDialog;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();

@@ -70,7 +70,7 @@ public class MyAccountActivity extends LogoActivity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_account);
-
+        NavigtionCreate();
         init();
         variablesInit();
 

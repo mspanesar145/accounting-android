@@ -58,6 +58,18 @@ public class ApiManagerImpl implements ApiManager {
     }
 
     @Override
+    public JSONObject facebookSignInApi(JSONObject postData){
+        try {
+            JsonParsing jsonParsing = new JsonParsing();
+            return jsonParsing.httpPost(servarUrl+signInApi,postData,null);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+    @Override
     public JSONObject signUpApi(User user){
         JSONObject postData = new JSONObject();
         try {

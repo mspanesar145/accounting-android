@@ -36,10 +36,25 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookAuthorizationException;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.Profile;
+import com.facebook.ProfileTracker;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.logo.R;
 import com.logo.application.LogoApplication;
 import com.logo.bo.User;
@@ -74,15 +89,107 @@ public class LoginActivity extends LogoActivity  {
     ImageView imageViewGoogle,imageViewFaceBook;
 
     User user;
+    private CallbackManager callbackManager;
+    private AccessTokenTracker accessTokenTracker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         init();
+        initFacebook();
+
     }
 
-    public void init(){
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void getUserFbProfile(final AccessToken loginResult) {
+        GraphRequest request = GraphRequest.newMeRequest(loginResult,
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        Log.v("LoginActivity", response.toString());
+                        String first_name = object.optString("first_name");
+                        String last_name = object.optString("last_name");
+                        String id = object.optString("id");
+                        //Toast.makeText(LoginActivity.this, "token = " + loginResult.toString() + " name = " + first_name.toString() + " last name = " + last_name.toString(), Toast.LENGTH_LONG).show();
+                        //loginWithFacebook(loginResult.getToken(), first_name, last_name, email, id);
+                    }
+                });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id,name,email,gender,birthday,first_name,last_name");
+        request.setParameters(parameters);
+        request.executeAsync();
+    }
+
+    private void initFacebook() {
+        callbackManager = CallbackManager.Factory.create();
+        accessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldToken, AccessToken newToken) {
+                Log.v("", "");
+            }
+        };
+
+        accessTokenTracker.startTracking();
+
+
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(final LoginResult loginResult) {
+                //Log.d("FB_token:",loginResult.getAccessToken().getToken());
+                AccessToken token = loginResult.getAccessToken();
+                String facebook_id = loginResult.getAccessToken().getUserId();
+                String appid = loginResult.getAccessToken().getApplicationId();
+                //getUserFbProfile(token);
+                JSONObject postData = new JSONObject();
+                try {
+                    postData.put("authType","facebook");
+                    postData.put("facebookID",facebook_id);
+                    postData.put("facebookAuthToken",token);
+                    new SignInProcess().execute(postData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onCancel() {
+                try {
+                    Toast.makeText(LoginActivity.this, "Login Cancelled", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    e.toString();
+                }
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                try {
+                    Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                    if (error instanceof FacebookAuthorizationException) {
+                        if (AccessToken.getCurrentAccessToken() != null) {
+                            LoginManager.getInstance().logOut();
+                        }
+                    }
+                } catch (Exception e) {
+                    e.toString();
+                }
+            }
+        });
+    }
+
+    public void doFacebookLogin() {
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+    }
+
+    public void init() {
         logoApplication = getLogoApplication();
         coreManager = logoApplication.getCoreManager();
         userManager = coreManager.getUserManager();
@@ -111,27 +218,28 @@ public class LoginActivity extends LogoActivity  {
     OnClickListener onClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(v.getId() == R.id.bt_login){
-
-                validation();
+            if (v.getId() == R.id.bt_login) {
+                startActivity(new Intent(context, HomeActivity.class));
+//                validation();
             }
-            if(v.getId() == R.id.tv_create_account){
-                startActivity(new Intent(context,SignUpActivity.class));
+            if (v.getId() == R.id.tv_create_account) {
+                startActivity(new Intent(context, SignUpActivity.class));
                 finish();
             }
-            if(v.getId() == R.id.iv_google){
-                alertManager.alert("Comming Soon","Info",context,null);
+            if (v.getId() == R.id.iv_google) {
+                alertManager.alert("Comming Soon", "Info", context, null);
             }
-            if(v.getId() == R.id.iv_fb){
-                alertManager.alert("Comming Soon","Info",context,null);
+            if (v.getId() == R.id.iv_fb) {
+                //    alertManager.alert("Comming Soon", "Info", context, null);
+                doFacebookLogin();
             }
-            if(v.getId() == R.id.tv_forgot_password){
-                alertManager.alert("Comming Soon","Info",context,null);
+            if (v.getId() == R.id.tv_forgot_password) {
+                alertManager.alert("Comming Soon", "Info", context, null);
             }
         }
     };
 
-    public void validation(){
+    public void validation() {
         String email = editTextEmail.getText().toString();
         String mobile = editTextMobile.getText().toString();
 
@@ -177,7 +285,7 @@ public class LoginActivity extends LogoActivity  {
         }
     }
 
-    public class SignInProcess extends AsyncTask<Object, Object, Object> {
+    public class SignInProcess extends AsyncTask<JSONObject, Object, Object> {
         ProgressDialog progressDialog;
         @Override
         protected void onPreExecute() {
@@ -191,11 +299,15 @@ public class LoginActivity extends LogoActivity  {
         }
 
         @Override
-        protected Object doInBackground(Object... objects) {
+        protected Object doInBackground(JSONObject... objects) {
+
             JSONObject jsonObject = null;
 
-            jsonObject = apiManager.signInApi(user);
-
+            if (objects[0] != null) {
+                jsonObject = apiManager.facebookSignInApi(objects[0]);
+            } else {
+                jsonObject = apiManager.signInApi(user);
+            }
             return jsonObject;
         }
 
