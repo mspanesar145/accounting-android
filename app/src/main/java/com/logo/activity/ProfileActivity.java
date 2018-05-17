@@ -36,6 +36,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.logo.R;
 import com.logo.application.LogoApplication;
 import com.logo.bo.User;
@@ -46,6 +47,7 @@ import com.logo.services.manager.ApiManager;
 import com.logo.services.manager.DeviceManager;
 import com.logo.services.manager.InternetManager;
 import com.logo.util.ImageUtils;
+import com.logo.views.RoundedImageView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -63,7 +65,7 @@ import java.util.Map;
 
 public class ProfileActivity extends LogoActivity {
 
-    private static int CAMERA_PIC_REQUEST = 100,PICK_IMAGE = 101,PICK_CONTENT = 102;
+    private static int CAMERA_PIC_REQUEST = 100, PICK_IMAGE = 101, PICK_CONTENT = 102;
 
     LogoApplication logoApplication;
     CoreManager coreManager;
@@ -79,16 +81,19 @@ public class ProfileActivity extends LogoActivity {
     Spinner categorySpinner, subCategorySpinner;
     RadioGroup rgContainsVideo;
     EditText etTitle, etVideoLink, etDescription;
-    RelativeLayout rlUploadCoverImage,rlUploadContentFileChooser;
-    LinearLayout llBottomMyAccount,llBottomContent,llBottomHome;
+    RelativeLayout rlUploadCoverImage, rlUploadContentFileChooser;
+    LinearLayout llBottomMyAccount, llBottomContent, llBottomHome;
     Button btSubmit;
     ImageView ivUploadCi;
     TextView tvUploadContentFilename;
+    TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae;
+    RoundedImageView riv_imageView;
+
     Boolean containsVideoLink = false;
     String uploadType = "";
-    File imageCoverFile = null,contentFileToUpload = null;
+    File imageCoverFile = null, contentFileToUpload = null;
 
-    Map<String,Integer> categoryMap,subCategoryMap;
+    Map<String, Integer> categoryMap, subCategoryMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,9 +112,7 @@ public class ProfileActivity extends LogoActivity {
         internetManager = coreManager.getInternetManager();
         deviceManager = coreManager.getDeviceManager();
         apiManager = coreManager.getApiManager();
-
         context = this;
-
        /* categoryMap = new HashMap<>();
         categoryMap.put("CPT",1);
         categoryMap.put("IPCC",2);
@@ -139,6 +142,55 @@ public class ProfileActivity extends LogoActivity {
         llBottomContent.setOnClickListener(bottomContentListener);
         llBottomHome.setOnClickListener(bottomHomeListener);
 
+        listTxt = (TextView) findViewById(R.id.list_txt);
+        listTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ProfileActivity.this,ContentActivity.class));
+                finish();
+            }
+        });
+
+        homeTxt = (TextView) findViewById(R.id.home_txt);
+        homeTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ProfileActivity.this,HomeActivity.class));
+                finish();
+            }
+        });
+        profile = (TextView) findViewById(R.id.profile);
+        profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ProfileActivity.this,ProfileActivity.class));
+                finish();
+            }
+        });
+        settings = (TextView) findViewById(R.id.settings);
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ProfileActivity.this,MyAccountActivity.class));
+                finish();
+            }
+        });
+
+        logout = (TextView) findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userManager.deleteUser();
+                startActivity(new Intent(ProfileActivity.this,LoginActivity.class));
+                finish();
+            }
+        });
+
+        tvUsernmae = (TextView)findViewById(R.id.tv_usernmae);
+        riv_imageView = (RoundedImageView) findViewById(R.id.riv_imageView);
+        User user = userManager.getUser();
+        tvUsernmae.setText(user.getFirstName());
+        Glide.with(context).load(user.getPicture()).into(riv_imageView);
 
         //Listeners
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -152,6 +204,7 @@ public class ProfileActivity extends LogoActivity {
                     e.printStackTrace();
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -167,6 +220,7 @@ public class ProfileActivity extends LogoActivity {
                     e.printStackTrace();
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -242,9 +296,9 @@ public class ProfileActivity extends LogoActivity {
 
             try {
                 if (ContextCompat.checkSelfPermission(getLogoApplication(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
                 } else {
-                    Intent cameraIntent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    Intent cameraIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     //cameraIntent.setType("image/*");
                     //cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI.getPath());
                     startActivityForResult(cameraIntent, PICK_IMAGE);
@@ -266,15 +320,15 @@ public class ProfileActivity extends LogoActivity {
             uploadType = "content";
             try {
                 if (ContextCompat.checkSelfPermission(getLogoApplication(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
                 } else {
-                    Intent cameraIntent = new Intent(Intent.ACTION_GET_CONTENT,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    Intent cameraIntent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     //cameraIntent.setType("image/*");
                     //cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI.getPath());
                     startActivityForResult(cameraIntent, PICK_CONTENT);
                 }
 
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -287,11 +341,11 @@ public class ProfileActivity extends LogoActivity {
         if (requestCode == 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
             if ("image".equals(uploadType)) {
-                Intent cameraIntent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                Intent cameraIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
                 startActivityForResult(cameraIntent, PICK_IMAGE);
             } else if ("content".equals(uploadType)) {
-                Intent cameraIntent = new Intent(Intent.ACTION_GET_CONTENT,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                Intent cameraIntent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
                 startActivityForResult(cameraIntent, PICK_CONTENT);
             }
@@ -309,11 +363,11 @@ public class ProfileActivity extends LogoActivity {
             User user = userManager.getUser();
 
             try {
-                userDocumentObject.put("createdById",user.getUserId());
-                userDocumentObject.put("title",etTitle.getText().toString());
-                userDocumentObject.put("content",etDescription.getText().toString());
+                userDocumentObject.put("createdById", user.getUserId());
+                userDocumentObject.put("title", etTitle.getText().toString());
+                userDocumentObject.put("content", etDescription.getText().toString());
                 if (!etVideoLink.getText().toString().equals("")) {
-                    userDocumentObject.put("videoLink",etVideoLink.getText().toString());
+                    userDocumentObject.put("videoLink", etVideoLink.getText().toString());
                 }
 
             } catch (Exception e) {
@@ -332,7 +386,7 @@ public class ProfileActivity extends LogoActivity {
     View.OnClickListener bottomContentListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            startActivity(new Intent(context,ContentActivity.class));
+            startActivity(new Intent(context, ContentActivity.class));
             finish();
         }
     };
@@ -340,7 +394,7 @@ public class ProfileActivity extends LogoActivity {
     View.OnClickListener bottomMySettingListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            startActivity(new Intent(context,MyAccountActivity.class));
+            startActivity(new Intent(context, MyAccountActivity.class));
             finish();
         }
     };
@@ -348,7 +402,7 @@ public class ProfileActivity extends LogoActivity {
     View.OnClickListener bottomHomeListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            startActivity(new Intent(context,HomeActivity.class));
+            startActivity(new Intent(context, HomeActivity.class));
             finish();
         }
     };
@@ -366,7 +420,7 @@ public class ProfileActivity extends LogoActivity {
             ivUploadCi.setImageBitmap(bitmap);
 
             try {
-                String filePath = ImageUtils.getPath(getApplicationContext(),data.getData());
+                String filePath = ImageUtils.getPath(getApplicationContext(), data.getData());
                 imageCoverFile = new File(filePath);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -394,7 +448,7 @@ public class ProfileActivity extends LogoActivity {
             //Bitmap image = (Bitmap) data.getExtras().get("data");
             Uri imageUri = data.getData();
 
-            System.out.println(ImageUtils.getPath(context,imageUri));
+            System.out.println(ImageUtils.getPath(context, imageUri));
             String[] projection = {MediaStore.Images.Media.DATA};
 
             Cursor cursor = getContentResolver().query(imageUri, projection, null, null, null);
@@ -410,7 +464,7 @@ public class ProfileActivity extends LogoActivity {
             tvUploadContentFilename.setVisibility(View.VISIBLE);
             tvUploadContentFilename.setText(imageUri.getLastPathSegment());
             try {
-                String filePath = ImageUtils.getPath(getApplicationContext(),data.getData());
+                String filePath = ImageUtils.getPath(getApplicationContext(), data.getData());
                 contentFileToUpload = new File(filePath);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -420,7 +474,7 @@ public class ProfileActivity extends LogoActivity {
 
     public Boolean validateDocumentForm() {
         if (etTitle.getText().toString().trim().equals("")) {
-            alertManager.alert("Please enter Title","Info", context,null);
+            alertManager.alert("Please enter Title", "Info", context, null);
             return false;
         }
 
@@ -430,7 +484,7 @@ public class ProfileActivity extends LogoActivity {
         }
         try {
             if (userDocumentObject.has("categoryId") && userDocumentObject.getInt("categoryId") == 0) {
-                alertManager.alert("Please select Category","Info", context,null);
+                alertManager.alert("Please select Category", "Info", context, null);
                 return false;
             }
         } catch (Exception e) {
@@ -438,24 +492,24 @@ public class ProfileActivity extends LogoActivity {
         }
         try {
             if (userDocumentObject.has("subCategoryId") && userDocumentObject.getInt("subCategoryId") == 0) {
-                alertManager.alert("Please select Sub Category","Info", context,null);
+                alertManager.alert("Please select Sub Category", "Info", context, null);
                 return false;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         if (!userDocumentObject.has("containsVideo")) {
-            alertManager.alert("Please tell if contains video?","Info", context,null);
+            alertManager.alert("Please tell if contains video?", "Info", context, null);
             return false;
         }
 
-        if (userDocumentObject.has("containsVideo") && !containsVideoLink && imageCoverFile == null) {
-            alertManager.alert("Please Upload Cover Image ?","Info", context,null);
+        if (userDocumentObject.has("containsVideo") && imageCoverFile == null) {
+            alertManager.alert("Please Upload Cover Image ?", "Info", context, null);
             return false;
         }
 
         if ((userDocumentObject.has("containsVideo") && !containsVideoLink) && (contentFileToUpload == null && etDescription.getText().toString().equals(""))) {
-            alertManager.alert("Please Upload Content or Enter Description.","Info", context,null);
+            alertManager.alert("Please Upload Content or Enter Description.", "Info", context, null);
             return false;
         }
 
@@ -483,7 +537,7 @@ public class ProfileActivity extends LogoActivity {
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
             super.onPostExecute(jsonObject);
-            if(progressDialog!=null) {
+            if (progressDialog != null) {
                 progressDialog.dismiss();
                 progressDialog = null;
             }
@@ -496,7 +550,7 @@ public class ProfileActivity extends LogoActivity {
                     SharedPreferences.Editor editor = pref.edit();
                     editor.putBoolean("myAccountExists", true);
 
-                    startActivity(new Intent(ProfileActivity.this,HomeActivity.class));
+                    startActivity(new Intent(ProfileActivity.this, HomeActivity.class));
                     finish();
                 } else {
                     alertManager.alert("Something wrong", "Server error", context, null);
@@ -520,6 +574,7 @@ public class ProfileActivity extends LogoActivity {
             //progressDialog.show();
 
         }
+
         @Override
         protected JSONObject doInBackground(JSONObject... jsonObjects) {
             return apiManager.saveCoverImage(imageCoverFile);
@@ -528,7 +583,7 @@ public class ProfileActivity extends LogoActivity {
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
             super.onPostExecute(jsonObject);
-            if(progressDialog!=null) {
+            if (progressDialog != null) {
                 progressDialog.dismiss();
                 progressDialog = null;
             }
@@ -536,7 +591,7 @@ public class ProfileActivity extends LogoActivity {
             try {
                 if (jsonObject != null) {
                     System.out.print(jsonObject);
-                    userDocumentObject.put("coverImageUrl",jsonObject.getString("coverImageUrl"));
+                    userDocumentObject.put("coverImageUrl", jsonObject.getString("coverImageUrl"));
 
                     if (contentFileToUpload != null) {
                         new UploadContentTask().execute();
@@ -566,6 +621,7 @@ public class ProfileActivity extends LogoActivity {
             //progressDialog.show();
 
         }
+
         @Override
         protected JSONObject doInBackground(JSONObject... jsonObjects) {
             return apiManager.saveCoverImage(contentFileToUpload);
@@ -574,7 +630,7 @@ public class ProfileActivity extends LogoActivity {
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
             super.onPostExecute(jsonObject);
-            if(progressDialog!=null) {
+            if (progressDialog != null) {
                 progressDialog.dismiss();
                 progressDialog = null;
             }
@@ -582,7 +638,7 @@ public class ProfileActivity extends LogoActivity {
             try {
                 if (jsonObject != null) {
                     System.out.print(jsonObject);
-                    userDocumentObject.put("contentLinkUrl",jsonObject.getString("coverImageUrl"));
+                    userDocumentObject.put("contentLinkUrl", jsonObject.getString("coverImageUrl"));
 
                     new UserDocumentProcess().execute(userDocumentObject);
                 } else {
@@ -607,6 +663,7 @@ public class ProfileActivity extends LogoActivity {
             //progressDialog.show();
 
         }
+
         @Override
         protected JSONArray doInBackground(JSONObject... jsonObjects) {
             return apiManager.findMainCategories();
@@ -615,7 +672,7 @@ public class ProfileActivity extends LogoActivity {
         @Override
         protected void onPostExecute(JSONArray jsonArray) {
             super.onPostExecute(jsonArray);
-            if(progressDialog!=null) {
+            if (progressDialog != null) {
                 progressDialog.dismiss();
                 progressDialog = null;
             }
@@ -624,18 +681,18 @@ public class ProfileActivity extends LogoActivity {
                 if (jsonArray != null && jsonArray.length() > 0) {
                     System.out.print(jsonArray);
                     try {
-                        categoryMap =  new HashMap<>();
+                        categoryMap = new HashMap<>();
 
                         if (jsonArray != null && jsonArray.length() > 0) {
                             System.out.print(jsonArray);
 
-                            String[] items = new String[jsonArray.length()+1];
+                            String[] items = new String[jsonArray.length() + 1];
                             items[0] = "Select Category";
-                            for (int i=0; i<jsonArray.length(); i++) {
+                            for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject subCategiryObj = jsonArray.getJSONObject(i);
                                 try {
-                                    categoryMap.put(subCategiryObj.getString("name"),subCategiryObj.getInt("profileCategoryId"));
-                                    items[i+1] = subCategiryObj.getString("name");
+                                    categoryMap.put(subCategiryObj.getString("name"), subCategiryObj.getInt("profileCategoryId"));
+                                    items[i + 1] = subCategiryObj.getString("name");
                                     //create an adapter to describe how the items are displayed, adapters are used in several places in android.
                                     //There are multiple variations of this, but this is the basic variant.
                                 } catch (Exception e) {
@@ -674,34 +731,35 @@ public class ProfileActivity extends LogoActivity {
             //progressDialog.show();
 
         }
+
         @Override
         protected JSONArray doInBackground(Integer... longs) {
             Integer parentCategoryId = longs[0];
-            String queryStr = "?parentCategoryId="+parentCategoryId;
+            String queryStr = "?parentCategoryId=" + parentCategoryId;
             return apiManager.findSubCatgories();
         }
 
         @Override
         protected void onPostExecute(JSONArray jsonArray) {
             super.onPostExecute(jsonArray);
-            if(progressDialog!=null) {
+            if (progressDialog != null) {
                 progressDialog.dismiss();
                 progressDialog = null;
             }
 
             try {
-                subCategoryMap =  new HashMap<>();
+                subCategoryMap = new HashMap<>();
 
                 if (jsonArray != null && jsonArray.length() > 0) {
                     System.out.print(jsonArray);
 
-                    String[] subItems = new String[jsonArray.length()+1];
+                    String[] subItems = new String[jsonArray.length() + 1];
                     subItems[0] = "Select SubCategory";
-                    for (int i=0; i<jsonArray.length(); i++) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject subCategiryObj = jsonArray.getJSONObject(i);
                         try {
-                            subCategoryMap.put(subCategiryObj.getString("name"),subCategiryObj.getInt("profileCategoryId"));
-                            subItems[i+1] = subCategiryObj.getString("name");
+                            subCategoryMap.put(subCategiryObj.getString("name"), subCategiryObj.getInt("profileCategoryId"));
+                            subItems[i + 1] = subCategiryObj.getString("name");
                             //create an adapter to describe how the items are displayed, adapters are used in several places in android.
                             //There are multiple variations of this, but this is the basic variant.
                         } catch (Exception e) {

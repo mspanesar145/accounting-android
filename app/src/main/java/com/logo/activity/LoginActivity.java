@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -55,6 +56,13 @@ import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
 import com.logo.R;
 import com.logo.application.LogoApplication;
 import com.logo.bo.User;
@@ -64,6 +72,7 @@ import com.logo.services.manager.AlertManager;
 import com.logo.services.manager.ApiManager;
 import com.logo.services.manager.DeviceManager;
 import com.logo.services.manager.InternetManager;
+import com.logo.util.LogoUtils;
 
 import org.json.JSONObject;
 
@@ -72,7 +81,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends LogoActivity  {
+public class LoginActivity extends LogoActivity {
 
     LogoApplication logoApplication;
     CoreManager coreManager;
@@ -85,12 +94,15 @@ public class LoginActivity extends LogoActivity  {
     Context context;
     EditText editTextEmail, editTextMobile;
     Button buttonLogin;
-    TextView textViewCreateAccount,textViewForgotPassword;
-    ImageView imageViewGoogle,imageViewFaceBook;
+    TextView textViewCreateAccount, textViewForgotPassword;
+    ImageView imageViewGoogle, imageViewFaceBook;
 
     User user;
     private CallbackManager callbackManager;
     private AccessTokenTracker accessTokenTracker;
+    private static final int RC_SIGN_IN = 007;
+    private GoogleApiClient mGoogleApiClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,14 +110,82 @@ public class LoginActivity extends LogoActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         init();
-        initFacebook();
+        //initFacebook();
+        //initGoogle();
 
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+    }
+
+    private void initGoogle() {
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+        try {
+            if (AccessToken.getCurrentAccessToken() != null) {
+                LoginManager.getInstance().logOut();
+            }
+        } catch (Exception e) {
+            e.toString();
+        }
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestScopes(new Scope(Scopes.PLUS_LOGIN))
+                .requestId().requestEmail().requestIdToken("1079274333856-ljvunn45oc3snfu2v2u0obbb3va1vi8s.apps.googleusercontent.com")
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+    }
+
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+            //Log.d("res", data.toString());
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result != null)
+                SignInResult(result);
+        } else
+            callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void SignInResult(GoogleSignInResult result) {
+        if (result.isSuccess()) {
+            // Signed in successfully, show authenticated UI.
+            GoogleSignInAccount acct = result.getSignInAccount();
+            String givenname = acct.getGivenName();
+            String familyname = acct.getFamilyName();
+            String personName = acct.getDisplayName();
+            String personPhotoUrl = acct.getPhotoUrl().toString();
+            String email = acct.getEmail();
+            String idToken = acct.getIdToken();
+            //Toast.makeText(LoginActivity.this, "token = " + idToken + " name = " + givenname + " email= " + email + " imgurl= " + personPhotoUrl, Toast.LENGTH_LONG).show();
+
+            JSONObject postData = new JSONObject();
+            try {
+                postData.put("authType", "google");
+                postData.put("googleAuthToken", idToken);
+                user = new User();
+                new SignInProcess().execute(postData);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.v("", "");
+            // Signed out, show unauthenticated UI.
+        }
     }
 
     private void getUserFbProfile(final AccessToken loginResult) {
@@ -117,6 +197,10 @@ public class LoginActivity extends LogoActivity  {
                         String first_name = object.optString("first_name");
                         String last_name = object.optString("last_name");
                         String id = object.optString("id");
+                        String email = object.optString("email");
+                        String imgUrl = "https://graph.facebook.com/" + id + "/picture?type=large";
+                        Toast.makeText(LoginActivity.this, "token = " + loginResult.toString() + " name = " + first_name.toString() + " last name = " + last_name.toString() + " email= " + email + " imgurl= " + imgUrl, Toast.LENGTH_LONG).show();
+
                         //Toast.makeText(LoginActivity.this, "token = " + loginResult.toString() + " name = " + first_name.toString() + " last name = " + last_name.toString(), Toast.LENGTH_LONG).show();
                         //loginWithFacebook(loginResult.getToken(), first_name, last_name, email, id);
                     }
@@ -149,9 +233,11 @@ public class LoginActivity extends LogoActivity  {
                 //getUserFbProfile(token);
                 JSONObject postData = new JSONObject();
                 try {
-                    postData.put("authType","facebook");
-                    postData.put("facebookID",facebook_id);
-                    postData.put("facebookAuthToken",token);
+                    postData.put("authType", "facebook");
+                    postData.put("facebookID", facebook_id);
+                    postData.put("facebookAuthToken", token.getToken());
+                    System.out.println(postData.toString());
+                    user = new User();
                     new SignInProcess().execute(postData);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -186,7 +272,20 @@ public class LoginActivity extends LogoActivity  {
     }
 
     public void doFacebookLogin() {
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email", "user_birthday"));
+    }
+
+    public void doGooglePlusLogin() {
+        //Toast.makeText(SignIn.this,"in progress...",Toast.LENGTH_SHORT).show();
+
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        try {
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(LoginActivity.this, "You haven't installed google+ on your device", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
     public void init() {
@@ -219,18 +318,23 @@ public class LoginActivity extends LogoActivity  {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.bt_login) {
-                startActivity(new Intent(context, HomeActivity.class));
-//                validation();
+                //startActivity(new Intent(context, HomeActivity.class));
+                validation();
             }
             if (v.getId() == R.id.tv_create_account) {
                 startActivity(new Intent(context, SignUpActivity.class));
                 finish();
             }
             if (v.getId() == R.id.iv_google) {
-                alertManager.alert("Comming Soon", "Info", context, null);
+                initGoogle();
+
+                doGooglePlusLogin();
+                //    alertManager.alert("Comming Soon", "Info", context, null);
             }
             if (v.getId() == R.id.iv_fb) {
                 //    alertManager.alert("Comming Soon", "Info", context, null);
+                initFacebook();
+
                 doFacebookLogin();
             }
             if (v.getId() == R.id.tv_forgot_password) {
@@ -243,50 +347,50 @@ public class LoginActivity extends LogoActivity  {
         String email = editTextEmail.getText().toString();
         String mobile = editTextMobile.getText().toString();
 
-        deviceManager.hideKeypad(editTextEmail,this);
+        deviceManager.hideKeypad(editTextEmail, this);
         boolean isValid = true;
         boolean nextStep = true;
-        if(email.trim().equals("") && mobile.trim().equals("")){
+        if (email.trim().equals("") && mobile.trim().equals("")) {
             isValid = false;
             nextStep = false;
-            alertManager.alert("Please enter details", "Info",this,null);
-        }
-        
-
-        if(nextStep && email.trim().equals("") ){
-            isValid = false;
-            nextStep = false;
-            alertManager.alert("Please enter Email", "Info",this,null);
-        }
-
-        if(nextStep && mobile.trim().equals("") ){
-            isValid = false;
-            nextStep = false;
-            alertManager.alert("Please enter Password", "Info",this,null);
-        }
-
-        if(nextStep && !email.trim().contains("@") ){
-            isValid = false;
-            nextStep = false;
-            alertManager.alert("Please enter Valid email", "Info",this,null);
+            alertManager.alert("Please enter details", "Info", this, null);
         }
 
 
+        if (nextStep && email.trim().equals("")) {
+            isValid = false;
+            nextStep = false;
+            alertManager.alert("Please enter Email", "Info", this, null);
+        }
 
-        if(isValid){
-            if(internetManager.isInternet(this)){
+        if (nextStep && mobile.trim().equals("")) {
+            isValid = false;
+            nextStep = false;
+            alertManager.alert("Please enter Password", "Info", this, null);
+        }
+
+        if (nextStep && !email.trim().contains("@")) {
+            isValid = false;
+            nextStep = false;
+            alertManager.alert("Please enter Valid email", "Info", this, null);
+        }
+
+
+        if (isValid) {
+            if (internetManager.isInternet(this)) {
                 user = new User();
                 user.setEmail(email);
                 user.setPassword(mobile);
                 new SignInProcess().execute();
-            }else{
-                alertManager.alert("Please check your Internet","Info",this,null);
+            } else {
+                alertManager.alert("Please check your Internet", "Info", this, null);
             }
         }
     }
 
     public class SignInProcess extends AsyncTask<JSONObject, Object, Object> {
         ProgressDialog progressDialog;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -304,7 +408,17 @@ public class LoginActivity extends LogoActivity  {
             JSONObject jsonObject = null;
 
             if (objects[0] != null) {
-                jsonObject = apiManager.facebookSignInApi(objects[0]);
+                JSONObject postData = objects[0];
+
+                try {
+                    if (postData.has("authType") && postData.getString("authType") == "facebook") {
+                        jsonObject = apiManager.facebookSignInApi(objects[0]);
+                    } else {
+                        jsonObject = apiManager.googleSignInApi(objects[0]);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } else {
                 jsonObject = apiManager.signInApi(user);
             }
@@ -316,40 +430,51 @@ public class LoginActivity extends LogoActivity  {
             super.onPostExecute(o);
             try {
                 JSONObject jsonObject = new JSONObject(o.toString());
-                if(jsonObject != null){
+                if (jsonObject != null) {
                     progressDialog.dismiss();
                     Log.i("result", jsonObject.toString());
-                    if(jsonObject.has("errorCode")){
-                        if(jsonObject.getInt("errorCode") != 0 && jsonObject.has("errorDetail")){
-                            alertManager.alert(jsonObject.getString("errorDetail"),"Error",context,null);
-                        }else{
-                            if(jsonObject.has(user.USERID)){
+                    if (jsonObject.has("errorCode")) {
+                        if (jsonObject.getInt("errorCode") != 0 && jsonObject.has("errorDetail")) {
+                            alertManager.alert(jsonObject.getString("errorDetail"), "Error", context, null);
+                        } else {
+                            if (jsonObject.has(user.USERID)) {
                                 user.setUserId(jsonObject.getInt(user.USERID));
-                            }else{
+                            } else {
                                 user.setUserId(0);
                             }
 
-                            if(jsonObject.has(user.FIRSTNAME)){
+                            if (jsonObject.has(user.EMAIL)) {
+                                user.setEmail(jsonObject.getString(user.EMAIL));
+                            } else {
+                                user.setEmail("");
+                            }
+
+
+                            if (jsonObject.has(user.FIRSTNAME)) {
                                 user.setFirstName(jsonObject.getString(user.FIRSTNAME));
-                            }else{
+                            } else {
                                 user.setFirstName("");
                             }
 
-                            if(jsonObject.has(user.LASTNAME)){
-                                user.setLastName(jsonObject.getString(user.LASTNAME));
-                            }else{
+                            if (jsonObject.has(user.LASTNAME)) {
+                                if (LogoUtils.isEmpty(jsonObject.getString(user.LASTNAME))) {
+                                    user.setLastName("");
+                                } else {
+                                    user.setLastName(jsonObject.getString(user.LASTNAME));
+                                }
+                            } else {
                                 user.setLastName("");
                             }
 
-                            if(jsonObject.has(user.USERNAME)){
+                            if (jsonObject.has(user.USERNAME)) {
                                 user.setUsername(jsonObject.getString(user.USERNAME));
-                            }else{
+                            } else {
                                 user.setUsername("");
                             }
 
-                            if(jsonObject.has(user.TOKEN)){
+                            if (jsonObject.has(user.TOKEN)) {
                                 user.setAuthToken(jsonObject.getString(user.TOKEN));
-                            }else{
+                            } else {
                                 user.setAuthToken("");
                             }
 
@@ -361,18 +486,18 @@ public class LoginActivity extends LogoActivity  {
                                 editor.putBoolean("myAccountExists", false);           // Saving boolean - true/false
                                 editor.commit(); // commit changes
 
-                                startActivity(new Intent(context,MyAccountActivity.class));
+                                startActivity(new Intent(context, MyAccountActivity.class));
                             } else {
-                                startActivity(new Intent(context,HomeActivity.class));
+                                startActivity(new Intent(context, HomeActivity.class));
                             }
                             finish();
                         }
                     }
-                }else {
-                    alertManager.alert("Something wrong","Server error",context,null);
+                } else {
+                    alertManager.alert("Something wrong", "Server error", context, null);
                 }
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

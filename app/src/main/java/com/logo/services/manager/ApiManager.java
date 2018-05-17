@@ -21,5 +21,6 @@ public interface ApiManager {
     public JSONArray findMainCategories();
     public JSONArray findSubCatgories();
     public JSONObject facebookSignInApi(JSONObject postData);
+    public JSONObject googleSignInApi(JSONObject postData);
 
 }

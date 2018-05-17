@@ -24,11 +24,13 @@ public class LogoActivity extends AppCompatActivity implements NavigationView.On
     DrawerLayout drawer;
     ImageView mImgBack;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
+
     }
 
     protected void NavigtionCreate() {
@@ -78,25 +80,58 @@ public class LogoActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
+    public void onButtonClick(View view) {
+        drawer.closeDrawer(GravityCompat.START);
+        switch (view.getId()) {
+            case R.id.home_txt:
+                break;
+            case R.id.list_txt:
+                break;
+            case R.id.bookmark_txt:
+                break;
+            /*case R.id.overview_txt:
+                break;
+            case R.id.calendar:
+                break;
+            case R.id.timeline:
+                break;*/
+            case R.id.profile:
+                break;
+           /* case R.id.widgets:
+                break;*/
+            case R.id.settings:
+                break;
+            case R.id.logout:
+                break;
+            case R.id.tv_usernmae:
+                break;
+
+        }
+
+    }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         if (id == R.id.nav_home) {
             // Handle the camera action
-            startActivity(new Intent(this,HomeActivity.class));
+            startActivity(new Intent(this, HomeActivity.class));
             finish();
         } else if (id == R.id.nav_list) {
-            startActivity(new Intent(this,ContentActivity.class));
+            startActivity(new Intent(this, ContentActivity.class));
             finish();
         } else if (id == R.id.nav_upload) {
-            startActivity(new Intent(this,ProfileActivity.class));
+            startActivity(new Intent(this, ProfileActivity.class));
             finish();
         } else if (id == R.id.nav_my_acct) {
-            startActivity(new Intent(this,MyAccountActivity.class));
+            startActivity(new Intent(this, MyAccountActivity.class));
             finish();
         } else if (id == R.id.nav_bookmarks) {
 
+        } else if (id == R.id.logout) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;

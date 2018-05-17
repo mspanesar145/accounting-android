@@ -10,6 +10,7 @@ public class User {
     public final String USERNAME = "username";
     public final String FACEBOOKID = "facebookID";
     public final String FACEBOOKAUTHTOKEN = "facebookAuthToken";
+    public final String GOOGLEAUTHTOKEN = "googleAuthToken";
     public final String TOKEN = "token";
     public final String PHOTO = "photo";
     public final String FIRSTNAME = "firstName";

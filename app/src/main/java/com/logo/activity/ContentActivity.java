@@ -31,6 +31,7 @@ import com.logo.services.manager.AlertManager;
 import com.logo.services.manager.ApiManager;
 import com.logo.services.manager.DeviceManager;
 import com.logo.services.manager.InternetManager;
+import com.logo.views.RoundedImageView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -54,6 +55,8 @@ public class ContentActivity extends LogoActivity {
 
     ListView lvContentItems;
     TextView tvNoContent;
+    TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae;
+    RoundedImageView riv_imageView;
     LinearLayout llBottomProfile,llBottomMyAccount,llBottomHome;
     LinearLayout llContentSingleListItem;
     ContentSectionAdapter contentSectionAdapter;
@@ -93,7 +96,58 @@ public class ContentActivity extends LogoActivity {
         llBottomMyAccount.setOnClickListener(bottomMySettingListener);
         llBottomHome.setOnClickListener(bottomHomeListener);
 
+        listTxt = (TextView) findViewById(R.id.list_txt);
+        listTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ContentActivity.this,ContentActivity.class));
+                finish();
+            }
+        });
+
+        homeTxt = (TextView) findViewById(R.id.home_txt);
+        homeTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ContentActivity.this,HomeActivity.class));
+                finish();
+            }
+        });
+        profile = (TextView) findViewById(R.id.profile);
+        profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ContentActivity.this,ProfileActivity.class));
+                finish();
+            }
+        });
+        settings = (TextView) findViewById(R.id.settings);
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ContentActivity.this,MyAccountActivity.class));
+                finish();
+            }
+        });
+
+        logout = (TextView) findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userManager.deleteUser();
+                startActivity(new Intent(ContentActivity.this,LoginActivity.class));
+                finish();
+            }
+        });
+
+
+
         User user = userManager.getUser();
+
+        tvUsernmae = (TextView)findViewById(R.id.tv_usernmae);
+        riv_imageView = (RoundedImageView) findViewById(R.id.riv_imageView);
+        tvUsernmae.setText(user.getFirstName());
+        Glide.with(context).load(user.getPicture()).into(riv_imageView);
 
         Intent receiverIntent = getIntent();
         if (receiverIntent.hasExtra("createdById")) {

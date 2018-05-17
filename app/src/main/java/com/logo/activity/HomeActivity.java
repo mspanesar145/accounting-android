@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,10 +20,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.logo.R;
 import com.logo.application.LogoApplication;
+import com.logo.bo.User;
 import com.logo.coremanager.CoreManager;
 import com.logo.database.manager.UserManager;
 import com.logo.services.manager.AlertManager;
@@ -30,6 +33,7 @@ import com.logo.services.manager.ApiManager;
 import com.logo.services.manager.DeviceManager;
 import com.logo.services.manager.InternetManager;
 import com.logo.util.LogoUtils;
+import com.logo.views.RoundedImageView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,8 +43,7 @@ import org.w3c.dom.Text;
  * Created by mandeep on 15/4/18.
  */
 
-public class HomeActivity extends LogoActivity  {
-
+public class HomeActivity extends LogoActivity {
     LogoApplication logoApplication;
     CoreManager coreManager;
     UserManager userManager;
@@ -48,16 +51,16 @@ public class HomeActivity extends LogoActivity  {
     InternetManager internetManager;
     DeviceManager deviceManager;
     ApiManager apiManager;
-
     Context context;
-
-    ListView lvImageSection,lvVideosVertical;
+    ListView lvImageSection, lvVideosVertical;
     HorizontalScrollView horizontalScrollView;
-    LinearLayout linearLayout,llVideoSection;
-    LinearLayout llBottomProfile,llBottomMyAccount,llBottomContent;
+    LinearLayout linearLayout, llVideoSection;
+    LinearLayout llBottomProfile, llBottomMyAccount, llBottomContent;
     ImageSectionAdapter imageSectionAdapter;
-    VideoSectionAdapter  videoSectionAdapter;
+    VideoSectionAdapter videoSectionAdapter;
     ImageView ivHomeBanner;
+    TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae;
+    RoundedImageView riv_imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +69,13 @@ public class HomeActivity extends LogoActivity  {
         setContentView(R.layout.activity_home);
         NavigtionCreate();
         init();
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 
     public void init() {
@@ -119,13 +129,63 @@ public class HomeActivity extends LogoActivity  {
         llBottomMyAccount.setOnClickListener(bottomMySettingListener);
         llBottomContent.setOnClickListener(bottomContentListener);
 
+        listTxt = (TextView) findViewById(R.id.list_txt);
+        listTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(HomeActivity.this,ContentActivity.class));
+                finish();
+            }
+        });
+
+        homeTxt = (TextView) findViewById(R.id.home_txt);
+        homeTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(HomeActivity.this,HomeActivity.class));
+                finish();
+            }
+        });
+        profile = (TextView) findViewById(R.id.profile);
+        profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(HomeActivity.this,ProfileActivity.class));
+                finish();
+            }
+        });
+        settings = (TextView) findViewById(R.id.settings);
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(HomeActivity.this,MyAccountActivity.class));
+                finish();
+            }
+        });
+
+        logout = (TextView) findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userManager.deleteUser();
+                startActivity(new Intent(HomeActivity.this,LoginActivity.class));
+                finish();
+            }
+        });
+
+        tvUsernmae = (TextView)findViewById(R.id.tv_usernmae);
+        riv_imageView = (RoundedImageView) findViewById(R.id.riv_imageView);
+        User user = userManager.getUser();
+        tvUsernmae.setText(user.getFirstName());
+        Glide.with(context).load(user.getPicture()).into(riv_imageView);
+
         new UserDocumentsProcess().execute();
     }
 
     View.OnClickListener bottomProfileListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            startActivity(new Intent(context,ProfileActivity.class));
+            startActivity(new Intent(context, ProfileActivity.class));
             finish();
         }
     };
@@ -133,7 +193,7 @@ public class HomeActivity extends LogoActivity  {
     View.OnClickListener bottomMySettingListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            startActivity(new Intent(HomeActivity.this,MyAccountActivity.class));
+            startActivity(new Intent(HomeActivity.this, MyAccountActivity.class));
             finish();
         }
     };
@@ -141,7 +201,7 @@ public class HomeActivity extends LogoActivity  {
     View.OnClickListener bottomContentListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            startActivity(new Intent(HomeActivity.this,ContentActivity.class));
+            startActivity(new Intent(HomeActivity.this, ContentActivity.class));
             finish();
         }
     };
@@ -184,9 +244,9 @@ public class HomeActivity extends LogoActivity  {
 
             if (convertView == null) {
                 holder = new ImageSectionHolder();
-                convertView = this.inflter.inflate(R.layout.adapter_horizontal_image_section,null);
-                holder.imageView = (ImageView)convertView.findViewById(R.id.iv_image);
-                holder.title = (TextView)convertView.findViewById(R.id.tv_title);
+                convertView = this.inflter.inflate(R.layout.adapter_horizontal_image_section, null);
+                holder.imageView = (ImageView) convertView.findViewById(R.id.iv_image);
+                holder.title = (TextView) convertView.findViewById(R.id.tv_title);
                 convertView.setTag(holder);
             } else {
                 holder = (ImageSectionHolder) convertView.getTag();
@@ -246,10 +306,10 @@ public class HomeActivity extends LogoActivity  {
 
             if (convertView == null) {
                 holder = new VideoSectionHolder();
-                convertView = this.inflter.inflate(R.layout.adapter_verticlel_video_section,null);
-                holder.imageView = (ImageView)convertView.findViewById(R.id.iv_video_img);
-                holder.title = (TextView)convertView.findViewById(R.id.tv_video_title);
-                holder.description = (TextView)convertView.findViewById(R.id.tv_video_desc);
+                convertView = this.inflter.inflate(R.layout.adapter_verticlel_video_section, null);
+                holder.imageView = (ImageView) convertView.findViewById(R.id.iv_video_img);
+                holder.title = (TextView) convertView.findViewById(R.id.tv_video_title);
+                holder.description = (TextView) convertView.findViewById(R.id.tv_video_desc);
 
                 convertView.setTag(holder);
             } else {
@@ -257,7 +317,7 @@ public class HomeActivity extends LogoActivity  {
             }
 
             try {
-               final  JSONObject jsonObject = videoSectionContent.getJSONObject(position);
+                final JSONObject jsonObject = videoSectionContent.getJSONObject(position);
                 holder.title.setText(jsonObject.getString("title"));
                 holder.description.setText(jsonObject.getString("content"));
                 Glide.with(context).load(jsonObject.getString("coverImageUrl")).into(holder.imageView);
@@ -307,7 +367,7 @@ public class HomeActivity extends LogoActivity  {
         @Override
         protected void onPostExecute(JSONArray jsonArray) {
             super.onPostExecute(jsonArray);
-            if(progressDialog!=null) {
+            if (progressDialog != null) {
                 progressDialog.dismiss();
                 progressDialog = null;
             }
@@ -368,7 +428,7 @@ public class HomeActivity extends LogoActivity  {
                     @Override
                     public void onClick(View v) {
                         try {
-                            System.out.println("Videooo : "+jsonObject.getString("videoLink"));
+                            System.out.println("Videooo : " + jsonObject.getString("videoLink"));
 
 
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(jsonObject.getString("videoLink")));
@@ -393,7 +453,7 @@ public class HomeActivity extends LogoActivity  {
 
             TextView textView = new TextView(this);
             textView.setLayoutParams(textViewLayoutParams);
-            textView.setTextSize(LogoUtils.convertDpToPixel(12,getApplicationContext()));
+            textView.setTextSize(LogoUtils.convertDpToPixel(12, getApplicationContext()));
             textView.setText("No Links Uploaded Yet");
             llVideoSection.setGravity(View.TEXT_ALIGNMENT_CENTER);
             llVideoSection.addView(textView);
@@ -402,21 +462,21 @@ public class HomeActivity extends LogoActivity  {
 
     public void populateImageScrollSection(JSONArray jsonArray) {
         boolean videoLinksPresent = true;
-        for (int i=0; i<jsonArray.length(); i++) {
+        for (int i = 0; i < jsonArray.length(); i++) {
             try {
                 final JSONObject jsonObject = jsonArray.getJSONObject(i);
-                System.out.println("----------- "+jsonObject.get("contentLinkUrl"));
+                System.out.println("----------- " + jsonObject.get("contentLinkUrl"));
                 if (LogoUtils.isEmpty(jsonObject.getString("contentLinkUrl"))) {
                     continue;
                 }
                 videoLinksPresent = false;
 
                 LinearLayout linearLayoutImageSection = new LinearLayout(HomeActivity.this);
-                linearLayoutImageSection.setLayoutParams(new LinearLayout.LayoutParams(LogoUtils.convertDpToPixel(85,getApplicationContext()), LogoUtils.convertDpToPixel(90,getApplicationContext())));
+                linearLayoutImageSection.setLayoutParams(new LinearLayout.LayoutParams(LogoUtils.convertDpToPixel(85, getApplicationContext()), LogoUtils.convertDpToPixel(90, getApplicationContext())));
                 linearLayoutImageSection.setOrientation(LinearLayout.VERTICAL);
 
                 ImageView imageView = new ImageView(HomeActivity.this);
-                imageView.setLayoutParams(new android.view.ViewGroup.LayoutParams(LogoUtils.convertDpToPixel(80,getApplicationContext()), LogoUtils.convertDpToPixel(80,getApplicationContext())));
+                imageView.setLayoutParams(new android.view.ViewGroup.LayoutParams(LogoUtils.convertDpToPixel(80, getApplicationContext()), LogoUtils.convertDpToPixel(80, getApplicationContext())));
                 Glide.with(HomeActivity.this).load(jsonObject.getString("coverImageUrl")).into(imageView);
 
                 TextView textView = new TextView(this);
@@ -439,8 +499,8 @@ public class HomeActivity extends LogoActivity  {
                             webView.setVisibility(View.VISIBLE);
                             webView.getSettings().setJavaScriptEnabled(true);
                             webView.loadUrl(url);*/
-                            Intent webview = new Intent(HomeActivity.this,WebViewActivity.class);
-                            webview.putExtra("url",url);
+                            Intent webview = new Intent(HomeActivity.this, WebViewActivity.class);
+                            webview.putExtra("url", url);
                             startActivity(webview);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -460,7 +520,7 @@ public class HomeActivity extends LogoActivity  {
 
             TextView textView = new TextView(this);
             textView.setLayoutParams(textViewLayoutParams);
-            textView.setTextSize(LogoUtils.convertDpToPixel(12,getApplicationContext()));
+            textView.setTextSize(LogoUtils.convertDpToPixel(12, getApplicationContext()));
             textView.setText("No Documents Uploaded Yet");
             linearLayout.setGravity(View.TEXT_ALIGNMENT_CENTER);
             linearLayout.addView(textView);
@@ -472,7 +532,7 @@ public class HomeActivity extends LogoActivity  {
         JSONArray contentSectionArray = new JSONArray();
 
         boolean conetDescriptionExists = false;
-        for (int i=0; i<jsonArray.length(); i++) {
+        for (int i = 0; i < jsonArray.length(); i++) {
             try {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
 
@@ -491,14 +551,12 @@ public class HomeActivity extends LogoActivity  {
             findViewById(R.id.no_content_desc).setVisibility(View.GONE);
             lvVideosVertical.setVisibility(View.VISIBLE);
 
-            videoSectionAdapter = new VideoSectionAdapter(HomeActivity.this,contentSectionArray);
+            videoSectionAdapter = new VideoSectionAdapter(HomeActivity.this, contentSectionArray);
             lvVideosVertical.setAdapter(videoSectionAdapter);
         } else {
             findViewById(R.id.no_content_desc).setVisibility(View.VISIBLE);
             lvVideosVertical.setVisibility(View.GONE);
         }
-
-
 
 
     }
