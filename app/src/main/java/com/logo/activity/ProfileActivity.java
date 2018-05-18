@@ -408,23 +408,30 @@ public class ProfileActivity extends LogoActivity {
     };
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PICK_IMAGE) {
-            //Bitmap image = (Bitmap) data.getExtras().get("data");
-            Uri imageUri = data.getData();
-            Bitmap bitmap = null;
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            ivUploadCi.setImageBitmap(bitmap);
+        if (null != data && null != data.getData()) {
 
-            try {
-                String filePath = ImageUtils.getPath(getApplicationContext(), data.getData());
-                imageCoverFile = new File(filePath);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            if (requestCode == PICK_IMAGE) {
+                //Bitmap image = (Bitmap) data.getExtras().get("data");
+                Uri imageUri = data.getData();
+                Bitmap bitmap = null, updatedBitmap=null;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, out);
+
+                    byte[] byteArray = out.toByteArray();
+                    updatedBitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                ivUploadCi.setImageBitmap(updatedBitmap);
+
+                try {
+                    String filePath = ImageUtils.getPath(getApplicationContext(), data.getData());
+                    imageCoverFile = new File(filePath);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             /*String[] projection = {MediaStore.Images.Media.DATA};
 
             Cursor cursor = getContentResolver().query(imageUri, projection, null, null, null);
@@ -442,32 +449,33 @@ public class ProfileActivity extends LogoActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }*/
-            //Drawable drawable = new BitmapDrawable(bitmap);
-            //imageView.setBackground(drawable);
-        } else if (requestCode == PICK_CONTENT) {
-            //Bitmap image = (Bitmap) data.getExtras().get("data");
-            Uri imageUri = data.getData();
+                //Drawable drawable = new BitmapDrawable(bitmap);
+                //imageView.setBackground(drawable);
+            } else if (requestCode == PICK_CONTENT) {
+                //Bitmap image = (Bitmap) data.getExtras().get("data");
+                Uri imageUri = data.getData();
 
-            System.out.println(ImageUtils.getPath(context, imageUri));
-            String[] projection = {MediaStore.Images.Media.DATA};
+                System.out.println(ImageUtils.getPath(context, imageUri));
+                String[] projection = {MediaStore.Images.Media.DATA};
 
-            Cursor cursor = getContentResolver().query(imageUri, projection, null, null, null);
-            cursor.moveToFirst();
+                Cursor cursor = getContentResolver().query(imageUri, projection, null, null, null);
+                cursor.moveToFirst();
 
-            int columnIndex = cursor.getColumnIndex(projection[0]);
-            String filepath = cursor.getString(columnIndex);
-            cursor.close();
-            Bitmap bitmap = BitmapFactory.decodeFile(filepath);
-            //ivUploadCi.setImageBitmap(bitmap);
-            System.out.println(imageUri.getLastPathSegment());
-            rlUploadContentFileChooser.setVisibility(View.GONE);
-            tvUploadContentFilename.setVisibility(View.VISIBLE);
-            tvUploadContentFilename.setText(imageUri.getLastPathSegment());
-            try {
-                String filePath = ImageUtils.getPath(getApplicationContext(), data.getData());
-                contentFileToUpload = new File(filePath);
-            } catch (Exception e) {
-                e.printStackTrace();
+                int columnIndex = cursor.getColumnIndex(projection[0]);
+                String filepath = cursor.getString(columnIndex);
+                cursor.close();
+                Bitmap bitmap = BitmapFactory.decodeFile(filepath);
+                //ivUploadCi.setImageBitmap(bitmap);
+                System.out.println(imageUri.getLastPathSegment());
+                rlUploadContentFileChooser.setVisibility(View.GONE);
+                tvUploadContentFilename.setVisibility(View.VISIBLE);
+                tvUploadContentFilename.setText(imageUri.getLastPathSegment());
+                try {
+                    String filePath = ImageUtils.getPath(getApplicationContext(), data.getData());
+                    contentFileToUpload = new File(filePath);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
