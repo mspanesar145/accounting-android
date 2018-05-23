@@ -6,21 +6,19 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.webkit.WebView;
 import android.widget.BaseAdapter;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.logo.R;
@@ -32,12 +30,12 @@ import com.logo.services.manager.AlertManager;
 import com.logo.services.manager.ApiManager;
 import com.logo.services.manager.DeviceManager;
 import com.logo.services.manager.InternetManager;
+import com.logo.util.AppUtil;
 import com.logo.util.LogoUtils;
 import com.logo.views.RoundedImageView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 /**
  * Created by mandeep on 15/4/18.
@@ -53,6 +51,7 @@ public class HomeActivity extends LogoActivity {
     ApiManager apiManager;
     Context context;
     ListView lvImageSection, lvVideosVertical;
+    ScrollView scrollHome;
     HorizontalScrollView horizontalScrollView;
     LinearLayout linearLayout, llVideoSection;
     LinearLayout llBottomProfile, llBottomMyAccount, llBottomContent;
@@ -95,27 +94,6 @@ public class HomeActivity extends LogoActivity {
 
         //lvImageSection = (ListView) findViewById(R.id.lv_image_section);
         lvVideosVertical = (ListView) findViewById(R.id.lv_videos_vertical);
-        lvVideosVertical.setOnTouchListener(new ListView.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                        // Disallow ScrollView to intercept touch events.
-                        v.getParent().requestDisallowInterceptTouchEvent(true);
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                        // Allow ScrollView to intercept touch events.
-                        v.getParent().requestDisallowInterceptTouchEvent(false);
-                        break;
-                }
-
-                // Handle ListView touch events.
-                v.onTouchEvent(event);
-                return true;
-            }
-        });
 
         horizontalScrollView = (HorizontalScrollView) findViewById(R.id.hsv_image_section);
         linearLayout = (LinearLayout) findViewById(R.id.ll_image_section);
@@ -124,6 +102,7 @@ public class HomeActivity extends LogoActivity {
         llBottomMyAccount = (LinearLayout) findViewById(R.id.ll_my_settings);
         llBottomProfile = (LinearLayout) findViewById(R.id.ll_bottom_profile);
         llBottomContent = (LinearLayout) findViewById(R.id.ll_bottom_content);
+        scrollHome = (ScrollView) findViewById(R.id.scroll_home);
 
         llBottomProfile.setOnClickListener(bottomProfileListener);
         llBottomMyAccount.setOnClickListener(bottomMySettingListener);
@@ -374,7 +353,7 @@ public class HomeActivity extends LogoActivity {
 
             try {
                 if (jsonArray != null) {
-                    System.out.print(jsonArray);
+//                    System.out.print(jsonArray);
                     populateImageScrollSection(jsonArray);
                     populateVideoScrollSection(jsonArray);
                     populateContentScrollSection(jsonArray);
@@ -428,7 +407,7 @@ public class HomeActivity extends LogoActivity {
                     @Override
                     public void onClick(View v) {
                         try {
-                            System.out.println("Videooo : " + jsonObject.getString("videoLink"));
+//                            System.out.println("Videooo : " + jsonObject.getString("videoLink"));
 
 
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(jsonObject.getString("videoLink")));
@@ -465,7 +444,7 @@ public class HomeActivity extends LogoActivity {
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
                 final JSONObject jsonObject = jsonArray.getJSONObject(i);
-                System.out.println("----------- " + jsonObject.get("contentLinkUrl"));
+//                System.out.println("----------- " + jsonObject.get("contentLinkUrl"));
                 if (LogoUtils.isEmpty(jsonObject.getString("contentLinkUrl"))) {
                     continue;
                 }
@@ -499,7 +478,7 @@ public class HomeActivity extends LogoActivity {
                             webView.setVisibility(View.VISIBLE);
                             webView.getSettings().setJavaScriptEnabled(true);
                             webView.loadUrl(url);*/
-                            Intent webview = new Intent(HomeActivity.this, WebViewActivity.class);
+                            Intent webview = new Intent(HomeActivity.this, FullScreenImageActivity.class);
                             webview.putExtra("url", url);
                             startActivity(webview);
                         } catch (Exception e) {
@@ -553,6 +532,8 @@ public class HomeActivity extends LogoActivity {
 
             videoSectionAdapter = new VideoSectionAdapter(HomeActivity.this, contentSectionArray);
             lvVideosVertical.setAdapter(videoSectionAdapter);
+            AppUtil.updateListViewHeight(lvVideosVertical);
+            scrollHome.smoothScrollTo(0, 0);
         } else {
             findViewById(R.id.no_content_desc).setVisibility(View.VISIBLE);
             lvVideosVertical.setVisibility(View.GONE);

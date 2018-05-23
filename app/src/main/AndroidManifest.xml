@@ -85,6 +85,8 @@
         <activity
             android:name=".activity.WebViewActivity"
             android:label="Webview Activity"></activity>
+        <activity android:name=".activity.FullScreenImageActivity"
+            android:screenOrientation="portrait"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

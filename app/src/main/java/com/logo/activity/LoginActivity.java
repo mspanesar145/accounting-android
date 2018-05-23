@@ -272,6 +272,9 @@ public class LoginActivity extends LogoActivity {
     }
 
     public void doFacebookLogin() {
+        if (null != AccessToken.getCurrentAccessToken()){
+            LoginManager.getInstance().logOut();
+        }
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email", "user_birthday"));
     }
 
