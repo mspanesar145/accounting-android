@@ -157,8 +157,8 @@ public class HomeActivity extends LogoActivity {
         User user = userManager.getUser();
         tvUsernmae.setText(user.getFirstName());
         Glide.with(context).load(user.getPicture()).into(riv_imageView);
-
-        new UserDocumentsProcess().execute();
+        // Get user data
+        new UserDocumentsProcess().execute(user.getUserId());
     }
 
     View.OnClickListener bottomProfileListener = new View.OnClickListener() {
@@ -326,7 +326,7 @@ public class HomeActivity extends LogoActivity {
         }
     }
 
-    class UserDocumentsProcess extends AsyncTask<JSONObject, JSONArray, JSONArray> {
+    class UserDocumentsProcess extends AsyncTask<Integer, JSONArray, JSONArray> {
         ProgressDialog progressDialog;
 
         @Override
@@ -339,8 +339,8 @@ public class HomeActivity extends LogoActivity {
         }
 
         @Override
-        protected JSONArray doInBackground(JSONObject... objects) {
-            return apiManager.findAllUserDocuments();
+        protected JSONArray doInBackground(Integer... objects) {
+            return apiManager.findTopTenDocuments(objects[0]);
         }
 
         @Override

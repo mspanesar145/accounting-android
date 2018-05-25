@@ -26,6 +26,7 @@ public class ApiManagerImpl implements ApiManager {
     public String signInApi = "/auth/user/authenticate";
     public String saveUserDocumentApi = "/save/userDocument";
     public String findAllUserDocumentsApi = "/find/allUserDocuments";
+    public String findTopTenDocumentsApi = "/find/topTenDocuments";
     public String saveCoverImage = "/save/coverimage";
     public String saveMyAccountApi = "/save/myAccount";
     public String findBlogsApi = "/find/allContentUserDocumentsForNullPdfAndCategoryIdSubCategoryId";
@@ -119,9 +120,20 @@ public class ApiManagerImpl implements ApiManager {
         return null;
     }
 
-    public JSONObject saveCoverImage(File file) {
+    @Override
+    public JSONArray findTopTenDocuments(int userId) {
+        try {
+            JsonParsing jsonParsing = new JsonParsing();
+            return jsonParsing.httpGet(servarUrl+findAllUserDocumentsApi+"?"+"userId="+userId,null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public JSONObject saveCoverImage(int userId, File file) {
         JsonParsing jsonParsing = new JsonParsing();
-        return jsonParsing.httpPostMultipart(servarUrl+saveCoverImage,file);
+        return jsonParsing.httpPostMultipart(servarUrl+saveCoverImage+"?"+"userId="+userId,file);
     }
 
     public JSONObject saveMyAccount(JSONObject postData) {

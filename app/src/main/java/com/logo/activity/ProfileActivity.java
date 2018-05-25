@@ -94,6 +94,7 @@ public class ProfileActivity extends LogoActivity {
     File imageCoverFile = null, contentFileToUpload = null;
 
     Map<String, Integer> categoryMap, subCategoryMap;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,7 +189,7 @@ public class ProfileActivity extends LogoActivity {
 
         tvUsernmae = (TextView)findViewById(R.id.tv_usernmae);
         riv_imageView = (RoundedImageView) findViewById(R.id.riv_imageView);
-        User user = userManager.getUser();
+        user = userManager.getUser();
         tvUsernmae.setText(user.getFirstName());
         Glide.with(context).load(user.getPicture()).into(riv_imageView);
 
@@ -375,7 +376,7 @@ public class ProfileActivity extends LogoActivity {
             }
             System.out.print(userDocumentObject);
             if (imageCoverFile != null) {
-                new UploadCoverImageTask().execute();
+                new UploadCoverImageTask().execute(user.getUserId());
             } else {
                 new UserDocumentProcess().execute(userDocumentObject);
             }
@@ -571,7 +572,7 @@ public class ProfileActivity extends LogoActivity {
         }
     }
 
-    class UploadCoverImageTask extends AsyncTask<JSONObject, JSONObject, JSONObject> {
+    class UploadCoverImageTask extends AsyncTask<Integer, JSONObject, JSONObject> {
         ProgressDialog progressDialog;
 
         @Override
@@ -584,8 +585,8 @@ public class ProfileActivity extends LogoActivity {
         }
 
         @Override
-        protected JSONObject doInBackground(JSONObject... jsonObjects) {
-            return apiManager.saveCoverImage(imageCoverFile);
+        protected JSONObject doInBackground(Integer... integers) {
+            return apiManager.saveCoverImage(integers[0], imageCoverFile);
         }
 
         @Override
@@ -601,8 +602,8 @@ public class ProfileActivity extends LogoActivity {
                     System.out.print(jsonObject);
                     userDocumentObject.put("coverImageUrl", jsonObject.getString("coverImageUrl"));
 
-                    if (contentFileToUpload != null) {
-                        new UploadContentTask().execute();
+                    if (contentFileToUpload != null && null != user) {
+                        new UploadContentTask().execute(user.getUserId());
                     } else {
                         new UserDocumentProcess().execute(userDocumentObject);
                     }
@@ -618,7 +619,7 @@ public class ProfileActivity extends LogoActivity {
     }
 
 
-    class UploadContentTask extends AsyncTask<JSONObject, JSONObject, JSONObject> {
+    class UploadContentTask extends AsyncTask<Integer, JSONObject, JSONObject> {
         ProgressDialog progressDialog;
 
         @Override
@@ -631,8 +632,8 @@ public class ProfileActivity extends LogoActivity {
         }
 
         @Override
-        protected JSONObject doInBackground(JSONObject... jsonObjects) {
-            return apiManager.saveCoverImage(contentFileToUpload);
+        protected JSONObject doInBackground(Integer... integers) {
+            return apiManager.saveCoverImage(integers[0],contentFileToUpload);
         }
 
         @Override

@@ -13,7 +13,8 @@ public interface ApiManager {
     public JSONObject signUpApi(User user);
     public JSONObject saveUserDocument(JSONObject jsonObject);
     public JSONArray findAllUserDocuments();
-    public JSONObject saveCoverImage(File file);
+    public JSONArray findTopTenDocuments(int userId);
+    public JSONObject saveCoverImage(int userId, File file);
     public JSONObject saveMyAccount(JSONObject jsonObject);
     public JSONArray findAllUserDocumentsByCategoryIdAndSubCategoryIdAndNullContentLink(String queryStr);
     public JSONObject findMyAccountByCreatedById(String queryStr);
