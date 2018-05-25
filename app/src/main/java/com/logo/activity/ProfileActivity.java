@@ -414,24 +414,24 @@ public class ProfileActivity extends LogoActivity {
             if (requestCode == PICK_IMAGE) {
                 //Bitmap image = (Bitmap) data.getExtras().get("data");
                 Uri imageUri = data.getData();
-                Bitmap bitmap = null, updatedBitmap=null;
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, out);
-
-                    byte[] byteArray = out.toByteArray();
-                    updatedBitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                ivUploadCi.setImageBitmap(updatedBitmap);
 
                 try {
                     String filePath = ImageUtils.getPath(getApplicationContext(), data.getData());
                     imageCoverFile = new File(filePath);
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+
+                Bitmap bitmap =null;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                    FileOutputStream out = new FileOutputStream(imageCoverFile);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, out);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (null!= bitmap) {
+                    ivUploadCi.setImageBitmap(bitmap);
                 }
             /*String[] projection = {MediaStore.Images.Media.DATA};
 
