@@ -427,6 +427,7 @@ public class ProfileActivity extends LogoActivity {
                     bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
                     FileOutputStream out = new FileOutputStream(imageCoverFile);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 50, out);
+                    out.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

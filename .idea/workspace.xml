@@ -102,8 +102,8 @@
       <file leaf-file-name="ProfileActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/ProfileActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="436">
-              <caret line="432" column="36" lean-forward="false" selection-start-line="432" selection-start-column="36" selection-end-line="432" selection-end-column="36" />
+            <state relative-caret-position="385">
+              <caret line="429" column="32" lean-forward="false" selection-start-line="429" selection-start-column="32" selection-end-line="429" selection-end-column="32" />
               <folding>
                 <element signature="e#9571#11134#0" expanded="true" />
                 <element signature="e#11133#11134#0" expanded="true" />
@@ -2479,7 +2479,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1527264907574" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1527265044348" />
       </method>
     </configuration>
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests">
@@ -2527,7 +2527,7 @@
       </Profilers>
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1527264907574" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1527265044348" />
       </method>
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -2689,7 +2689,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1527264907575" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1527265044349" />
       </method>
     </configuration>
     <list size="1">
@@ -3217,8 +3217,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/ProfileActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="436">
-          <caret line="432" column="36" lean-forward="false" selection-start-line="432" selection-start-column="36" selection-end-line="432" selection-end-column="36" />
+        <state relative-caret-position="385">
+          <caret line="429" column="32" lean-forward="false" selection-start-line="429" selection-start-column="32" selection-end-line="429" selection-end-column="32" />
           <folding>
             <element signature="e#9571#11134#0" expanded="true" />
             <element signature="e#11133#11134#0" expanded="true" />
