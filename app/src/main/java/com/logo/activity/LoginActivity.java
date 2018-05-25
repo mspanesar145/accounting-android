@@ -57,12 +57,15 @@ import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.logo.R;
 import com.logo.application.LogoApplication;
 import com.logo.bo.User;
@@ -280,7 +283,13 @@ public class LoginActivity extends LogoActivity {
 
     public void doGooglePlusLogin() {
         //Toast.makeText(SignIn.this,"in progress...",Toast.LENGTH_SHORT).show();
-
+        try {
+            if (AccessToken.getCurrentAccessToken() != null) {
+                LoginManager.getInstance().logOut();
+            }
+        } catch (Exception e) {
+            e.toString();
+        }
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         try {
             startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -397,10 +406,12 @@ public class LoginActivity extends LogoActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.setCancelable(false);
-            progressDialog.setMessage("Loading");
+            if (null == progressDialog) {
+                progressDialog = new ProgressDialog(context);
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.setCancelable(false);
+                progressDialog.setMessage("Loading");
+            }
             progressDialog.show();
 
         }
@@ -410,7 +421,7 @@ public class LoginActivity extends LogoActivity {
 
             JSONObject jsonObject = null;
 
-            if (objects[0] != null) {
+            if (null != objects && objects.length > 0 && objects[0] != null) {
                 JSONObject postData = objects[0];
 
                 try {
@@ -431,6 +442,9 @@ public class LoginActivity extends LogoActivity {
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
+            if (null != progressDialog) {
+                progressDialog.dismiss();
+            }
             try {
                 JSONObject jsonObject = new JSONObject(o.toString());
                 if (jsonObject != null) {
