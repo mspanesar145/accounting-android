@@ -326,7 +326,7 @@ public class HomeActivity extends LogoActivity {
         }
     }
 
-    class UserDocumentsProcess extends AsyncTask<Integer, JSONArray, JSONArray> {
+    class UserDocumentsProcess extends AsyncTask<Integer, JSONObject, JSONObject> {
         ProgressDialog progressDialog;
 
         @Override
@@ -339,24 +339,24 @@ public class HomeActivity extends LogoActivity {
         }
 
         @Override
-        protected JSONArray doInBackground(Integer... objects) {
+        protected JSONObject doInBackground(Integer... objects) {
             return apiManager.findTopTenDocuments(objects[0]);
         }
 
         @Override
-        protected void onPostExecute(JSONArray jsonArray) {
-            super.onPostExecute(jsonArray);
+        protected void onPostExecute(JSONObject jsonObject) {
+            super.onPostExecute(jsonObject);
             if (progressDialog != null) {
                 progressDialog.dismiss();
                 progressDialog = null;
             }
 
             try {
-                if (jsonArray != null) {
+                if (jsonObject != null) {
 //                    System.out.print(jsonArray);
-                    populateImageScrollSection(jsonArray);
-                    populateVideoScrollSection(jsonArray);
-                    populateContentScrollSection(jsonArray);
+                    populateImageScrollSection(jsonObject.optJSONArray("image"));
+                    populateVideoScrollSection(jsonObject.optJSONArray("video"));
+                    populateContentScrollSection(jsonObject.optJSONArray("content"));
                 } else {
                     alertManager.alert("Something wrong", "Server error", context, null);
                 }

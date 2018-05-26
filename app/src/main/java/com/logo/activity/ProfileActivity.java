@@ -95,6 +95,7 @@ public class ProfileActivity extends LogoActivity {
 
     Map<String, Integer> categoryMap, subCategoryMap;
     private User user;
+    private ArrayAdapter<String> categoryAdapter, subCategoryAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,7 +199,7 @@ public class ProfileActivity extends LogoActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 try {
-                    userDocumentObject.put("categoryId", categorySpinner.getItemIdAtPosition(position));
+                    userDocumentObject.put("categoryId", categoryMap.get(categoryAdapter.getItem(position)));
                     new SubCatgoriesTask().execute(userDocumentObject.getInt("categoryId"));
 
                 } catch (Exception e) {
@@ -216,7 +217,7 @@ public class ProfileActivity extends LogoActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 try {
-                    userDocumentObject.put("subCategoryId", subCategorySpinner.getItemIdAtPosition(position));
+                    userDocumentObject.put("subCategoryId", subCategoryMap.get(subCategoryAdapter.getItem(position)));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -708,9 +709,9 @@ public class ProfileActivity extends LogoActivity {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                                ArrayAdapter<String> subAdapter = new ArrayAdapter<>(ProfileActivity.this, android.R.layout.simple_spinner_dropdown_item, items);
+                                categoryAdapter = new ArrayAdapter<>(ProfileActivity.this, android.R.layout.simple_spinner_dropdown_item, items);
                                 //set the spinners adapter to the previously created one.
-                                categorySpinner.setAdapter(subAdapter);
+                                categorySpinner.setAdapter(categoryAdapter);
                             }
                         } else {
                             //alertManager.alert("Something wrong", "Server error", context, null);
@@ -775,9 +776,9 @@ public class ProfileActivity extends LogoActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        ArrayAdapter<String> subAdapter = new ArrayAdapter<>(ProfileActivity.this, android.R.layout.simple_spinner_dropdown_item, subItems);
+                        subCategoryAdapter = new ArrayAdapter<>(ProfileActivity.this, android.R.layout.simple_spinner_dropdown_item, subItems);
                         //set the spinners adapter to the previously created one.
-                        subCategorySpinner.setAdapter(subAdapter);
+                        subCategorySpinner.setAdapter(subCategoryAdapter);
                     }
                 } else {
                     //alertManager.alert("Something wrong", "Server error", context, null);

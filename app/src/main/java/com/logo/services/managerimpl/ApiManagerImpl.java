@@ -121,10 +121,10 @@ public class ApiManagerImpl implements ApiManager {
     }
 
     @Override
-    public JSONArray findTopTenDocuments(int userId) {
+    public JSONObject findTopTenDocuments(int userId) {
         try {
             JsonParsing jsonParsing = new JsonParsing();
-            return jsonParsing.httpGet(servarUrl+findAllUserDocumentsApi+"?"+"userId="+userId,null);
+            return jsonParsing.httpGetJSONObject(servarUrl+findTopTenDocumentsApi+"?"+"userId="+userId,null);
         } catch (Exception e) {
             e.printStackTrace();
         }
