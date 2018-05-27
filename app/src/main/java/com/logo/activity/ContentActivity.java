@@ -176,9 +176,9 @@ public class ContentActivity extends LogoActivity {
             new ContentProcess().execute(map);
         } else  {
             SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
-            if (pref.getBoolean("myAccountExists",false))  {
+//            if (pref.getBoolean("myAccountExists",false))  {
                 new FetchMyAccountProcess().execute();
-            }
+//            }
         }
 
 
