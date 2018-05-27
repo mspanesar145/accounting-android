@@ -431,9 +431,15 @@ public class ContentActivity extends LogoActivity {
                         } else if (!TextUtils.isEmpty(jsonObject.optString("contentLinkUrl"))) {
                             try {
                                 String url = jsonObject.getString("contentLinkUrl");
-                                Intent webview = new Intent(ContentActivity.this, FullScreenImageActivity.class);
-                                webview.putExtra("url", url);
-                                startActivity(webview);
+                                if (AppUtil.isImage(url)) {
+                                    Intent webview = new Intent(ContentActivity.this, FullScreenImageActivity.class);
+                                    webview.putExtra("url", url);
+                                    startActivity(webview);
+                                } else {
+                                    Intent webview = new Intent(ContentActivity.this, WebViewActivity.class);
+                                    webview.putExtra("url", url);
+                                    startActivity(webview);
+                                }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

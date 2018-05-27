@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -512,9 +513,17 @@ public class HomeActivity extends LogoActivity {
                             webView.setVisibility(View.VISIBLE);
                             webView.getSettings().setJavaScriptEnabled(true);
                             webView.loadUrl(url);*/
-                            Intent webview = new Intent(HomeActivity.this, FullScreenImageActivity.class);
-                            webview.putExtra("url", url);
-                            startActivity(webview);
+                            if (!TextUtils.isEmpty(url)) {
+                                if (AppUtil.isImage(url)) {
+                                    Intent webview = new Intent(HomeActivity.this, FullScreenImageActivity.class);
+                                    webview.putExtra("url", url);
+                                    startActivity(webview);
+                                } else {
+                                    Intent webview = new Intent(HomeActivity.this, WebViewActivity.class);
+                                    webview.putExtra("url", url);
+                                    startActivity(webview);
+                                }
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

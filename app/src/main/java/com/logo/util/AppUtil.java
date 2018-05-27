@@ -33,4 +33,12 @@ public class AppUtil {
         params.height = totalHeight + (myListView.getDividerHeight() * (adapterCount - 1));
         myListView.setLayoutParams(params);
     }
+
+    public static boolean isImage(String url) {
+        if (url.contains(".png") || url.contains(".jpg") || url.contains(".jpeg")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
