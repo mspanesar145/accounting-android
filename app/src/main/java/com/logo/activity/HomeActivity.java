@@ -60,6 +60,7 @@ public class HomeActivity extends LogoActivity {
     ImageView ivHomeBanner;
     TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae;
     RoundedImageView riv_imageView;
+    TextView tvViewAllVideo, tvViewAllImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +104,8 @@ public class HomeActivity extends LogoActivity {
         llBottomProfile = (LinearLayout) findViewById(R.id.ll_bottom_profile);
         llBottomContent = (LinearLayout) findViewById(R.id.ll_bottom_content);
         scrollHome = (ScrollView) findViewById(R.id.scroll_home);
+        tvViewAllVideo = (TextView) findViewById(R.id.view_all_video);
+        tvViewAllImage = (TextView) findViewById(R.id.view_all_image);
 
         llBottomProfile.setOnClickListener(bottomProfileListener);
         llBottomMyAccount.setOnClickListener(bottomMySettingListener);
@@ -289,6 +292,7 @@ public class HomeActivity extends LogoActivity {
                 holder.imageView = (ImageView) convertView.findViewById(R.id.iv_video_img);
                 holder.title = (TextView) convertView.findViewById(R.id.tv_video_title);
                 holder.description = (TextView) convertView.findViewById(R.id.tv_video_desc);
+                holder.layoutContent = (LinearLayout) convertView.findViewById(R.id.ll_video_horizontal_row);
 
                 convertView.setTag(holder);
             } else {
@@ -301,16 +305,24 @@ public class HomeActivity extends LogoActivity {
                 holder.description.setText(jsonObject.getString("content"));
                 Glide.with(context).load(jsonObject.getString("coverImageUrl")).into(holder.imageView);
 
-                holder.description.setOnClickListener(new View.OnClickListener() {
+                holder.layoutContent.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(myActivity, ContentActivity.class);
-                        try {
-                            intent.putExtra("createdById", jsonObject.getLong("createdById"));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        startActivity(intent);
+                            if (jsonObject != null) {
+                                Intent intent = new Intent(HomeActivity.this, ContentActivity.class);
+                                intent.putExtra(AppUtil.CATEGORY_ID, jsonObject.optInt(AppUtil.CATEGORY_ID));
+                                intent.putExtra(AppUtil.SUB_CATEGORY_ID, jsonObject.optInt(AppUtil.SUB_CATEGORY_ID));
+                                startActivity(intent);
+                                finish();
+                            }
+
+//                        Intent intent = new Intent(myActivity, ContentActivity.class);
+//                        try {
+//                            intent.putExtra("createdById", jsonObject.getLong("createdById"));
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                        startActivity(intent);
                     }
                 });
             } catch (Exception e) {
@@ -323,6 +335,7 @@ public class HomeActivity extends LogoActivity {
             ImageView imageView;
             TextView title;
             TextView description;
+            LinearLayout layoutContent;
         }
     }
 
@@ -368,7 +381,7 @@ public class HomeActivity extends LogoActivity {
         }
     }
 
-    public void populateVideoScrollSection(JSONArray jsonArray) {
+    public void populateVideoScrollSection(final JSONArray jsonArray) {
         boolean videoLinksPresent = false;
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
@@ -436,10 +449,31 @@ public class HomeActivity extends LogoActivity {
             textView.setText("No Links Uploaded Yet");
             llVideoSection.setGravity(View.TEXT_ALIGNMENT_CENTER);
             llVideoSection.addView(textView);
+        } else {
+//            if (jsonArray.length() > 10) {
+                tvViewAllVideo.setVisibility(View.VISIBLE);
+                tvViewAllVideo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (jsonArray.length() != 0) {
+                            JSONObject object = jsonArray.optJSONObject(0);
+                            if (object != null) {
+                                Intent intent = new Intent(HomeActivity.this, ContentActivity.class);
+                                intent.putExtra(AppUtil.CATEGORY_ID, object.optInt(AppUtil.CATEGORY_ID));
+                                intent.putExtra(AppUtil.SUB_CATEGORY_ID, object.optInt(AppUtil.SUB_CATEGORY_ID));
+                                intent.putExtra(AppUtil.CONTAINS_VIDEO, object.optBoolean(AppUtil.CONTAINS_VIDEO));
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+
+                    }
+                });
+//            }
         }
     }
 
-    public void populateImageScrollSection(JSONArray jsonArray) {
+    public void populateImageScrollSection(final JSONArray jsonArray) {
         boolean videoLinksPresent = true;
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
@@ -503,11 +537,31 @@ public class HomeActivity extends LogoActivity {
             textView.setText("No Documents Uploaded Yet");
             linearLayout.setGravity(View.TEXT_ALIGNMENT_CENTER);
             linearLayout.addView(textView);
+        } else {
+//            if (jsonArray.length() > 10) {
+                tvViewAllImage.setVisibility(View.VISIBLE);
+                tvViewAllImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (jsonArray.length() != 0) {
+                            JSONObject object = jsonArray.optJSONObject(0);
+                            if (object != null) {
+                                Intent intent = new Intent(HomeActivity.this, ContentActivity.class);
+                                intent.putExtra(AppUtil.CATEGORY_ID, object.optInt(AppUtil.CATEGORY_ID));
+                                intent.putExtra(AppUtil.SUB_CATEGORY_ID, object.optInt(AppUtil.SUB_CATEGORY_ID));
+                                intent.putExtra(AppUtil.CONTAINS_VIDEO, object.optBoolean(AppUtil.CONTAINS_VIDEO));
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+                    }
+                });
+//            }
         }
 
     }
 
-    public void populateContentScrollSection(JSONArray jsonArray) {
+    public void populateContentScrollSection(final JSONArray jsonArray) {
         JSONArray contentSectionArray = new JSONArray();
 
         boolean conetDescriptionExists = false;

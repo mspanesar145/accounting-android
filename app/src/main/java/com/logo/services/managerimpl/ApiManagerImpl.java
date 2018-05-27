@@ -30,6 +30,7 @@ public class ApiManagerImpl implements ApiManager {
     public String saveCoverImage = "/save/coverimage";
     public String saveMyAccountApi = "/save/myAccount";
     public String findBlogsApi = "/find/allContentUserDocumentsForNullPdfAndCategoryIdSubCategoryId";
+    public String findDocumentsById = "/find/allDocumentsByCategotyIdSubCategoryIdContainsVideo";
     public String findMyAccountByCreatedById = "/find/myAccountByCreatedById";
     public String saveDoumentRating="/save/documentRating";
     public String findMainCategories="/find/categories";
@@ -150,6 +151,18 @@ public class ApiManagerImpl implements ApiManager {
         try {
             JsonParsing jsonParsing = new JsonParsing();
             String url = servarUrl+findBlogsApi+queryStr;
+            return jsonParsing.httpGet(url,null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public JSONArray findDocumentById(String queryStr) {
+        try {
+            JsonParsing jsonParsing = new JsonParsing();
+            String url = servarUrl+findDocumentsById+queryStr;
             return jsonParsing.httpGet(url,null);
         } catch (Exception e) {
             e.printStackTrace();

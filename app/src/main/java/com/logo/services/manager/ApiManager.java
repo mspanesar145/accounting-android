@@ -17,6 +17,7 @@ public interface ApiManager {
     public JSONObject saveCoverImage(int userId, File file);
     public JSONObject saveMyAccount(JSONObject jsonObject);
     public JSONArray findAllUserDocumentsByCategoryIdAndSubCategoryIdAndNullContentLink(String queryStr);
+    public JSONArray findDocumentById(String queryStr);
     public JSONObject findMyAccountByCreatedById(String queryStr);
     public JSONObject saveDocumentRating(JSONObject postData);
     public JSONArray findMainCategories();

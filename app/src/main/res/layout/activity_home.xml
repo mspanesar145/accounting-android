@@ -68,11 +68,24 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
-                            android:text="IMAGE SECTION HEADING" />
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:text="IMAGE SECTION HEADING" />
+
+                            <TextView android:id="@+id/view_all_image"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="20dp"
+                                android:text="@string/view_all"
+                                android:textColor="@color/com_facebook_blue"
+                                android:visibility="gone"/>
+                        </LinearLayout>
 
                         <HorizontalScrollView
                             android:id="@+id/hsv_image_section"
@@ -97,12 +110,26 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
-
-                        <TextView
+                        
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
-                            android:text="VIDEO SECTION HEADING" />
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:text="VIDEO SECTION HEADING" />
+                            
+                            <TextView android:id="@+id/view_all_video"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="20dp"
+                                android:text="@string/view_all"
+                                android:textColor="@color/com_facebook_blue"
+                                android:visibility="gone"/>
+                        </LinearLayout>
+
 
                         <HorizontalScrollView
                             android:id="@+id/hsv_video_section"

@@ -41,7 +41,6 @@ public class FullScreenImageActivity extends LogoActivity {
         if (getIntent().hasExtra("url")) {
             Glide.with(this)
                     .load(getIntent().getStringExtra("url"))
-                    .override(400, 400)
                     .fitCenter()
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override

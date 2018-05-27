@@ -10,6 +10,11 @@ import android.widget.ListView;
  */
 
 public class AppUtil {
+
+    public static final String CATEGORY_ID = "categoryId";
+    public static final String SUB_CATEGORY_ID = "subCategoryId";
+    public static final String CONTAINS_VIDEO = "containsVideo";
+
     public static void updateListViewHeight(ListView myListView) {
         ListAdapter myListAdapter = myListView.getAdapter();
         if (myListAdapter == null) {

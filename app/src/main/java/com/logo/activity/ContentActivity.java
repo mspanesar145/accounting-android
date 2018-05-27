@@ -4,15 +4,19 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -31,11 +35,15 @@ import com.logo.services.manager.AlertManager;
 import com.logo.services.manager.ApiManager;
 import com.logo.services.manager.DeviceManager;
 import com.logo.services.manager.InternetManager;
+import com.logo.util.AppUtil;
 import com.logo.views.RoundedImageView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by mandeep on 23/4/18.
@@ -152,11 +160,24 @@ public class ContentActivity extends LogoActivity {
         Intent receiverIntent = getIntent();
         if (receiverIntent.hasExtra("createdById")) {
             Long createdById = receiverIntent.getLongExtra("createdById", user.getUserId());
-            new ContentProcess().execute(createdById);
-        } else {
-            if (user != null) {
-                Long userId = Long.valueOf(user.getUserId());
-                new ContentProcess().execute(userId);
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("userId", createdById);
+            new ContentProcess().execute(map);
+        } else if (receiverIntent.hasExtra(AppUtil.CATEGORY_ID)) {
+            HashMap<String, Object> map =new HashMap<>();
+            map.put(AppUtil.CATEGORY_ID, receiverIntent.getIntExtra(AppUtil.CATEGORY_ID, 0));
+            if (receiverIntent.hasExtra(AppUtil.SUB_CATEGORY_ID)) {
+                map.put(AppUtil.SUB_CATEGORY_ID, receiverIntent.getIntExtra(AppUtil.SUB_CATEGORY_ID, 0));
+            }
+            if (receiverIntent.hasExtra(AppUtil.CONTAINS_VIDEO)) {
+                map.put(AppUtil.CONTAINS_VIDEO
+                        , receiverIntent.getBooleanExtra(AppUtil.CONTAINS_VIDEO, false));
+            }
+            new ContentProcess().execute(map);
+        } else  {
+            SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
+            if (pref.getBoolean("myAccountExists",false))  {
+                new FetchMyAccountProcess().execute();
             }
         }
 
@@ -187,7 +208,7 @@ public class ContentActivity extends LogoActivity {
         }
     };
 
-    class ContentProcess extends AsyncTask<Long, JSONArray, JSONArray> {
+    class ContentProcess extends AsyncTask<HashMap<String, Object>, JSONArray, JSONArray> {
         ProgressDialog progressDialog;
 
         @Override
@@ -197,11 +218,25 @@ public class ContentActivity extends LogoActivity {
         }
 
         @Override
-        protected JSONArray doInBackground(Long... longs) {
-            Long createdById = longs[0];
-            //User user = userManager.getUser();
-            String queryStr = "?userId="+createdById;
-            return apiManager.findAllUserDocumentsByCategoryIdAndSubCategoryIdAndNullContentLink(queryStr);
+        protected JSONArray doInBackground(HashMap<String, Object>... objects) {
+            HashMap<String, Object> map = objects[0];
+
+            String queryStr;
+            if (map.containsKey(AppUtil.CATEGORY_ID)){
+                queryStr = "?" + AppUtil.CATEGORY_ID + "="+ map.get(AppUtil.CATEGORY_ID);
+                if (map.containsKey(AppUtil.SUB_CATEGORY_ID)) {
+                    queryStr = queryStr + "&" + AppUtil.SUB_CATEGORY_ID + "="+ map.get(AppUtil.SUB_CATEGORY_ID);
+                }
+                if (map.containsKey(AppUtil.CONTAINS_VIDEO)) {
+                    queryStr = queryStr + "&" + AppUtil.CONTAINS_VIDEO + "=" + map.get(AppUtil.CONTAINS_VIDEO);
+                }
+
+                return apiManager.findDocumentById(queryStr);
+            } else if (map.containsKey("userId")) {
+                queryStr = "?userId="+map.get("userId");
+                return apiManager.findAllUserDocumentsByCategoryIdAndSubCategoryIdAndNullContentLink(queryStr);
+            }
+            return null;
         }
 
         @Override
@@ -255,6 +290,50 @@ public class ContentActivity extends LogoActivity {
         }
     }
 
+    class FetchMyAccountProcess extends AsyncTask<JSONObject, JSONObject, JSONObject> {
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(context, "", "Loading. Please wait...", true);
+        }
+
+        @Override
+        protected JSONObject doInBackground(JSONObject... objects) {
+            String queryStr = "?createdById="+userManager.getUser().getUserId();
+            return apiManager.findMyAccountByCreatedById(queryStr);
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            super.onPostExecute(jsonObject);
+            if(progressDialog!=null) {
+                progressDialog.dismiss();
+                progressDialog = null;
+            }
+
+            try {
+                if (jsonObject != null) {
+                    SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putBoolean("myAccountExists", true);           // Saving boolean - true/false
+                    editor.commit(); // commit changes
+
+                    HashMap<String, Object> map =new HashMap<>();
+                    map.put(AppUtil.CATEGORY_ID, jsonObject.opt("mainCourseId"));
+                    map.put(AppUtil.SUB_CATEGORY_ID, jsonObject.opt("secondryCourseId"));
+                    // Fetch content
+                    new ContentProcess().execute(map);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
     public class ContentSectionAdapter extends BaseAdapter {
 
         LayoutInflater inflter;
@@ -295,6 +374,7 @@ public class ContentActivity extends LogoActivity {
                 holder = new ContentSectionHolder();
                 convertView = this.inflter.inflate(R.layout.adapter_content_screen_items,null);
                 holder.ivContentImage = (ImageView)convertView.findViewById(R.id.iv_content_image);
+                holder.ivContentAttachment = (ImageView)convertView.findViewById(R.id.iv_content_attachment);
                 holder.tvContentTitle = (TextView)convertView.findViewById(R.id.tv_content_title);
                 holder.tvContentDesc = (TextView)convertView.findViewById(R.id.tv_content_desc);
                 holder.btRate = (Button) convertView.findViewById(R.id.bt_rate);
@@ -336,6 +416,32 @@ public class ContentActivity extends LogoActivity {
                     }
                 });
 
+                holder.ivContentAttachment.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (jsonObject.optBoolean("containsVideo") && !TextUtils.isEmpty(jsonObject.optString("videoLink"))) {
+                            try {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(jsonObject.getString("videoLink")));
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.setPackage("com.google.android.youtube");
+                                startActivity(intent);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else if (!TextUtils.isEmpty(jsonObject.optString("contentLinkUrl"))) {
+                            try {
+                                String url = jsonObject.getString("contentLinkUrl");
+                                Intent webview = new Intent(ContentActivity.this, FullScreenImageActivity.class);
+                                webview.putExtra("url", url);
+                                startActivity(webview);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+                });
+
                 holder.tvContentShare.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -358,7 +464,7 @@ public class ContentActivity extends LogoActivity {
         }
 
         class ContentSectionHolder {
-            ImageView ivContentImage,tvContentShare;
+            ImageView ivContentImage,tvContentShare, ivContentAttachment;
             TextView tvContentTitle,tvContentDesc;
             Button btRate;
 
