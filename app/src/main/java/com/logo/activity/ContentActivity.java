@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -379,6 +380,7 @@ public class ContentActivity extends LogoActivity {
                 holder.tvContentDesc = (TextView)convertView.findViewById(R.id.tv_content_desc);
                 holder.btRate = (Button) convertView.findViewById(R.id.bt_rate);
                 holder.tvContentShare = (ImageView) convertView.findViewById(R.id.iv_content_share);
+                holder.ratingBar = (RatingBar) convertView.findViewById(R.id.rb_rating);
 
                 convertView.setTag(holder);
             } else {
@@ -391,8 +393,8 @@ public class ContentActivity extends LogoActivity {
                 holder.tvContentTitle.setText(jsonObject.getString("title"));
 
                 String text = jsonObject.getString("content");
-                if (text.length()>50) {
-                    text=text.substring(0,50);
+                if (text.length()>24) {
+                    text=text.substring(0,24);
                 }
                 text += "...";
                 holder.tvContentDesc.setText(Html.fromHtml(text+"<font color='#76daff'> <u>Read More</u></font>"));
@@ -407,6 +409,9 @@ public class ContentActivity extends LogoActivity {
                                 dialog.show(ft, FullScreenDialog.TAG);
                     }
                 });
+
+                holder.ratingBar.setRating((float) jsonObject.getInt("overallRating"));
+
 
                 holder.btRate.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -473,6 +478,7 @@ public class ContentActivity extends LogoActivity {
             ImageView ivContentImage,tvContentShare, ivContentAttachment;
             TextView tvContentTitle,tvContentDesc;
             Button btRate;
+            RatingBar ratingBar;
 
 
         }
@@ -494,8 +500,6 @@ public class ContentActivity extends LogoActivity {
             dialog.setCancelable(false);
             dialog.setContentView(R.layout.dialog_rating);
 
-
-            TextView tvOverAllRatingText = (TextView) dialog.findViewById(R.id.tv_overall_rating_text);
             try {
                 selectedDocumentId =  this.userDocObj.getLong("userDocumentId");
                 if (this.userDocObj.get("overallRating") == null || this.userDocObj.get("overallRating") == "null") {
@@ -506,7 +510,6 @@ public class ContentActivity extends LogoActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            tvOverAllRatingText.setText("Overall Rating : "+selectedDocumentOverallRating);
             final ImageView ivRating1 = (ImageView) dialog.findViewById(R.id.iv_rating_1);
             final ImageView ivRating2 = (ImageView) dialog.findViewById(R.id.iv_rating_2);
             final ImageView ivRating3 = (ImageView) dialog.findViewById(R.id.iv_rating_3);
