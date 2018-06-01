@@ -41,6 +41,7 @@ public class ApiManagerImpl implements ApiManager {
     public String findMainCategories="/find/categories";
     public String findSubCategories="/find/subCategories";
     public String findByBannersForLogin = "/find/bannersByScreen";
+    public String findCommentsById = "/find/documentsCommentsByDocumentId";
 
 
 
@@ -110,6 +111,17 @@ public class ApiManagerImpl implements ApiManager {
         try {
             JsonParsing jsonParsing = new JsonParsing();
             return jsonParsing.httpGet(servarUrl+findByBannersForLogin+"?screen="+screenName, null);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public JSONArray findCommentsById(String documentId) {
+        try {
+            JsonParsing jsonParsing = new JsonParsing();
+            return jsonParsing.httpGet(servarUrl+findCommentsById+"?documentId="+documentId, null);
         }catch (Exception e) {
             e.printStackTrace();
         }

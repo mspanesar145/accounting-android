@@ -26,5 +26,6 @@ public interface ApiManager {
     public JSONObject facebookSignInApi(JSONObject postData);
     public JSONObject googleSignInApi(JSONObject postData);
     public JSONArray findBannersForLogin(String screenName);
+    public JSONArray findCommentsById(String documentId);
 
 }

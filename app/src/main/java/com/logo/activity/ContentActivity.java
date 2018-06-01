@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,10 +41,10 @@ import com.logo.views.RoundedImageView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by mandeep on 23/4/18.
@@ -433,6 +432,13 @@ public class ContentActivity extends LogoActivity {
                     }
                 });
 
+                holder.btnViewComments.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new CommentProccess().execute(String.valueOf(jsonObject.optInt("userDocumentId")));
+                    }
+                });
+
                 holder.ivContentAttachment.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -739,6 +745,51 @@ public class ContentActivity extends LogoActivity {
             try {
                 if (jsonObject != null) {
 
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    class CommentProccess extends AsyncTask<String, JSONObject, JSONArray> {
+
+        ProgressDialog progressDialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(ContentActivity.this, "", "Loading. Please wait...", true);
+        }
+
+        @Override
+        protected JSONArray doInBackground(String... objects) {
+            return apiManager.findCommentsById(objects[0]);
+        }
+
+        @Override
+        protected void onPostExecute(final JSONArray jsonArray) {
+            super.onPostExecute(jsonArray);
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+                progressDialog = null;
+            }
+
+            try {
+                if (jsonArray != null && jsonArray.length() > 0) {
+                    ViewCommentFragment dialog = new ViewCommentFragment();
+
+                    Bundle bundle = new Bundle();
+
+                    ArrayList<String> commentList = new ArrayList<>();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        commentList.add(jsonArray.optJSONObject(i).optString("comment"));
+                    }
+                    bundle.putStringArrayList("comments", commentList);
+                    dialog.setArguments(bundle);
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    dialog.show(ft, FullScreenDialog.TAG);
+                } else {
+                    Toast.makeText(ContentActivity.this, "No Comments Found", Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
