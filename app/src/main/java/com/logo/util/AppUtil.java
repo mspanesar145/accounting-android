@@ -14,6 +14,9 @@ public class AppUtil {
     public static final String CATEGORY_ID = "categoryId";
     public static final String SUB_CATEGORY_ID = "subCategoryId";
     public static final String CONTAINS_VIDEO = "containsVideo";
+    public static final String PARAM_DEVICE_TYPE = "deviceType";
+    public static final String DEVICE_TYPE = "android";
+    public static final String DEVICE_TOKEN = "deviceToken";
 
     public static void updateListViewHeight(ListView myListView) {
         ListAdapter myListAdapter = myListView.getAdapter();

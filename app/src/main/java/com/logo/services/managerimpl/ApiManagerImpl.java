@@ -2,10 +2,14 @@ package com.logo.services.managerimpl;
 
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.logo.application.LogoApplication;
 import com.logo.bo.User;
 import com.logo.services.JsonParsing;
 import com.logo.services.manager.ApiManager;
+import com.logo.util.AppUtil;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -33,8 +37,10 @@ public class ApiManagerImpl implements ApiManager {
     public String findDocumentsById = "/find/allDocumentsByCategotyIdSubCategoryIdContainsVideo";
     public String findMyAccountByCreatedById = "/find/myAccountByCreatedById";
     public String saveDoumentRating="/save/documentRating";
+    public String saveDocumentComment="/save/documentComment";
     public String findMainCategories="/find/categories";
     public String findSubCategories="/find/subCategories";
+    public String findByBannersForLogin = "/find/bannersByScreen";
 
 
 
@@ -50,6 +56,12 @@ public class ApiManagerImpl implements ApiManager {
             postData.put(user.EMAIL,user.getEmail());
             postData.put(user.PASSWORD,user.getPassword());
 
+            if (ConnectionResult.SUCCESS == GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(logoApplication.getApplicationContext())){
+                String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+                postData.put(user.DEVICE_TOKEN, refreshedToken);
+                postData.put(user.DEVICE_TYPE, AppUtil.DEVICE_TYPE);
+            }
+
             JsonParsing jsonParsing = new JsonParsing();
             return jsonParsing.httpPost(servarUrl+signInApi,postData,null);
         } catch(Exception e) {
@@ -62,6 +74,11 @@ public class ApiManagerImpl implements ApiManager {
     @Override
     public JSONObject facebookSignInApi(JSONObject postData){
         try {
+            if (ConnectionResult.SUCCESS == GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(logoApplication.getApplicationContext())){
+                String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+                postData.put(AppUtil.DEVICE_TOKEN, refreshedToken);
+                postData.put(AppUtil.PARAM_DEVICE_TYPE, AppUtil.DEVICE_TYPE);
+            }
             JsonParsing jsonParsing = new JsonParsing();
             return jsonParsing.httpPost(servarUrl+signUpApi,postData,null);
         } catch(Exception e) {
@@ -74,6 +91,11 @@ public class ApiManagerImpl implements ApiManager {
     @Override
     public JSONObject googleSignInApi(JSONObject postData){
         try {
+            if (ConnectionResult.SUCCESS == GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(logoApplication.getApplicationContext())){
+                String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+                postData.put(AppUtil.DEVICE_TOKEN, refreshedToken);
+                postData.put(AppUtil.PARAM_DEVICE_TYPE, AppUtil.DEVICE_TYPE);
+            }
             JsonParsing jsonParsing = new JsonParsing();
             return jsonParsing.httpPost(servarUrl+signUpApi,postData,null);
         } catch(Exception e) {
@@ -81,6 +103,17 @@ public class ApiManagerImpl implements ApiManager {
         }
         return null;
 
+    }
+
+    @Override
+    public JSONArray findBannersForLogin(String screenName) {
+        try {
+            JsonParsing jsonParsing = new JsonParsing();
+            return jsonParsing.httpGet(servarUrl+findByBannersForLogin+"?screen="+screenName, null);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -92,6 +125,12 @@ public class ApiManagerImpl implements ApiManager {
             postData.put(user.PASSWORD,user.getPassword());
             postData.put(user.FIRSTNAME,user.getFirstName());
             postData.put(user.LASTNAME,user.getLastName());
+
+            if (ConnectionResult.SUCCESS == GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(logoApplication.getApplicationContext())){
+                String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+                postData.put(AppUtil.DEVICE_TOKEN, refreshedToken);
+                postData.put(AppUtil.PARAM_DEVICE_TYPE, AppUtil.DEVICE_TYPE);
+            }
 
             JsonParsing jsonParsing = new JsonParsing();
             return jsonParsing.httpPost(servarUrl+signUpApi,postData,null);
@@ -185,6 +224,17 @@ public class ApiManagerImpl implements ApiManager {
         try {
             JsonParsing jsonParsing = new JsonParsing();
             return jsonParsing.httpPost(servarUrl+saveDoumentRating,postData,null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public JSONObject saveDocumentComment(JSONObject postData) {
+        try {
+            JsonParsing jsonParsing = new JsonParsing();
+            return jsonParsing.httpPost(servarUrl+saveDocumentComment,postData,null);
         } catch (Exception e) {
             e.printStackTrace();
         }

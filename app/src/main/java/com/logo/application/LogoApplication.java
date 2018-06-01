@@ -7,6 +7,7 @@ import android.content.pm.Signature;
 import android.util.Base64;
 import android.util.Log;
 
+import com.google.firebase.FirebaseApp;
 import com.logo.coremanager.CoreManager;
 
 import java.security.MessageDigest;
@@ -18,6 +19,7 @@ public class LogoApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        FirebaseApp.initializeApp(this);
         coreManager = new CoreManager(this);
         printHashKey();
 

@@ -1,38 +1,21 @@
 package com.logo.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
+import android.os.Handler;
+import android.support.v4.view.ViewPager;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -42,6 +25,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -49,24 +34,19 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookAuthorizationException;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.Profile;
-import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.logo.R;
+import com.logo.adapters.LoginSliderAdapter;
 import com.logo.application.LogoApplication;
 import com.logo.bo.User;
 import com.logo.coremanager.CoreManager;
@@ -77,9 +57,11 @@ import com.logo.services.manager.DeviceManager;
 import com.logo.services.manager.InternetManager;
 import com.logo.util.LogoUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import static android.Manifest.permission.READ_CONTACTS;
+import me.relex.circleindicator.CircleIndicator;
 
 /**
  * A login screen that offers login via email/password.
@@ -99,6 +81,11 @@ public class LoginActivity extends LogoActivity {
     Button buttonLogin;
     TextView textViewCreateAccount, textViewForgotPassword;
     ImageView imageViewGoogle, imageViewFaceBook;
+    CircleIndicator indicator;
+
+    ViewPager mPager;
+    private static int currentPage = 0;
+    public String servarUrl = "http://159.203.95.8:8181";
 
     User user;
     private CallbackManager callbackManager;
@@ -113,6 +100,7 @@ public class LoginActivity extends LogoActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         init();
+        new FetchBanner().execute("login");
         //initFacebook();
         //initGoogle();
 
@@ -318,6 +306,8 @@ public class LoginActivity extends LogoActivity {
         textViewForgotPassword = (TextView) findViewById(R.id.tv_forgot_password);
         imageViewFaceBook = (ImageView) findViewById(R.id.iv_fb);
         imageViewGoogle = (ImageView) findViewById(R.id.iv_google);
+        mPager = (ViewPager) findViewById(R.id.pager);
+        indicator = (CircleIndicator) findViewById(R.id.indicator);
 
         buttonLogin.setOnClickListener(onClickListener);
         textViewCreateAccount.setOnClickListener(onClickListener);
@@ -399,6 +389,78 @@ public class LoginActivity extends LogoActivity {
             }
         }
     }
+
+    private class FetchBanner extends AsyncTask<String, Object, Object> {
+
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (null == progressDialog) {
+                progressDialog = new ProgressDialog(context);
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.setCancelable(false);
+                progressDialog.setMessage("Loading");
+            }
+            progressDialog.show();
+
+        }
+
+        @Override
+        protected Object doInBackground(String... strings) {
+            return apiManager.findBannersForLogin(strings[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            if (null != progressDialog) {
+                progressDialog.dismiss();
+            }
+            try {
+                JSONArray jsonArray = new JSONArray(o.toString());
+                if (null!= jsonArray && jsonArray.length() > 0) {
+                    initSlider(jsonArray);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void initSlider(JSONArray array) {
+        final List<String> imageUrlList = new ArrayList<>();
+        for(int i = 0; i< array.length(); i++) {
+            try {
+                JSONObject object = array.getJSONObject(i);
+                imageUrlList.add(servarUrl + object.optString("path"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        mPager.setAdapter(new LoginSliderAdapter(this, imageUrlList));
+        indicator.setViewPager(mPager);
+
+        // Auto start of viewpager
+        final Handler handler = new Handler();
+        final Runnable Update = new Runnable() {
+            public void run() {
+                if (currentPage == imageUrlList.size()) {
+                    currentPage = 0;
+                }
+                mPager.setCurrentItem(currentPage++, true);
+            }
+        };
+        Timer swipeTimer = new Timer();
+        swipeTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(Update);
+            }
+        }, 2200, 2200);
+    }
+
 
     public class SignInProcess extends AsyncTask<JSONObject, Object, Object> {
         ProgressDialog progressDialog;

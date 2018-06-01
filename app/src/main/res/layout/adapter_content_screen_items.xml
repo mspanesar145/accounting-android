@@ -10,7 +10,8 @@
         <LinearLayout
             android:id="@+id/ll_content_single_list_item"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:layout_height="wrap_content"
+            android:minHeight="200dp"
             android:weightSum="3"
             android:orientation="horizontal">
 
@@ -52,17 +53,53 @@
                 <RatingBar android:id="@+id/rb_rating"
                     android:layout_width="wrap_content"
                     android:layout_height="25dp"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="4dp"
                     android:stepSize="0.5"
                     android:isIndicator="true"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center_horizontal"
                     android:numStars="5"
                     style="@style/CustomRatingSmall" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:layout_marginTop="4dp"
+                    android:weightSum="2"
+                    android:gravity="center"
+                    >
+                    <Button
+                        android:id="@+id/bt_comment"
+                        android:layout_width="0dp"
+                        android:layout_height="25dp"
+                        android:text="Comment"
+                        android:textSize="12sp"
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:textColor="@color/black"
+                        android:background="@drawable/button_curve_edges"/>
+
+                    <Button
+                        android:id="@+id/bt_view_comment"
+                        android:layout_width="0dp"
+                        android:layout_height="25dp"
+                        android:text="View Comments"
+                        android:textSize="12sp"
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:textColor="@color/black"
+                        android:background="@drawable/button_curve_edges"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
                     android:weightSum="6"
                     android:gravity="center"
                     >

@@ -15,6 +15,8 @@ public class User {
     public final String PHOTO = "photo";
     public final String FIRSTNAME = "firstName";
     public final String LASTNAME = "lastName";
+    public final String DEVICE_TOKEN = "deviceToken";
+    public final String DEVICE_TYPE = "deviceType";
 
 
 

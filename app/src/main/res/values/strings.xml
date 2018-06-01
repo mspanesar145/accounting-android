@@ -6,6 +6,7 @@
     <!--Facebook App Id-->
     <string name="facebook_app_id">1800088453391367</string>
     <string name="fb_login_protocol_scheme">fb1800088453391367</string>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <!--Navigation Drawer String-->
     <string name="home">HOME</string>
     <string name="list">LIST</string>

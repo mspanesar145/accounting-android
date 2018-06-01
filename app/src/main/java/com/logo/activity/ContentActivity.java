@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -71,6 +72,7 @@ public class ContentActivity extends LogoActivity {
     ContentSectionAdapter contentSectionAdapter;
     JSONArray contentJSONArray;
     Integer rating = 0;
+    String comment;
     Long selectedDocumentId;
     Integer selectedDocumentOverallRating;
 
@@ -381,6 +383,8 @@ public class ContentActivity extends LogoActivity {
                 holder.btRate = (Button) convertView.findViewById(R.id.bt_rate);
                 holder.tvContentShare = (ImageView) convertView.findViewById(R.id.iv_content_share);
                 holder.ratingBar = (RatingBar) convertView.findViewById(R.id.rb_rating);
+                holder.btnComment = (Button) convertView.findViewById(R.id.bt_comment);
+                holder.btnViewComments = (Button) convertView.findViewById(R.id.bt_view_comment);
 
                 convertView.setTag(holder);
             } else {
@@ -418,6 +422,14 @@ public class ContentActivity extends LogoActivity {
                     public void onClick(View v) {
                         RatingDialog alert = new RatingDialog(jsonObject);
                         alert.showDialog(contentActivity, "Error opening dialog");
+                    }
+                });
+
+                holder.btnComment.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CommentDialog commentDialog = new CommentDialog(jsonObject);
+                        commentDialog.showDialog(contentActivity, "Error opening dialog");
                     }
                 });
 
@@ -477,7 +489,7 @@ public class ContentActivity extends LogoActivity {
         class ContentSectionHolder {
             ImageView ivContentImage,tvContentShare, ivContentAttachment;
             TextView tvContentTitle,tvContentDesc;
-            Button btRate;
+            Button btRate, btnComment, btnViewComments;
             RatingBar ratingBar;
 
 
@@ -625,6 +637,95 @@ public class ContentActivity extends LogoActivity {
             }
 
             return apiManager.saveDocumentRating(ratingObject);
+        }
+
+        @Override
+        protected void onPostExecute(final JSONObject jsonObject) {
+            super.onPostExecute(jsonObject);
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+                progressDialog = null;
+            }
+
+            try {
+                if (jsonObject != null) {
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public class CommentDialog {
+
+        JSONObject userDocObj;
+
+        public CommentDialog(JSONObject jsonObject) {
+            this.userDocObj =  jsonObject;
+        }
+
+        public void showDialog(final ContentActivity activity, String msg){
+            rating = 0;
+            final Dialog dialog = new Dialog(activity);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setCancelable(false);
+            dialog.setContentView(R.layout.dialog_content_comment);
+
+            try {
+                selectedDocumentId =  this.userDocObj.getLong("userDocumentId");
+                if (this.userDocObj.get("overallRating") == null || this.userDocObj.get("overallRating") == "null") {
+                    selectedDocumentOverallRating = 0;
+                } else {
+                    selectedDocumentOverallRating = this.userDocObj.getInt("overallRating");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            final EditText tvComment = (EditText) dialog.findViewById(R.id.tv_comment);
+            Button btRatingOk = (Button) dialog.findViewById(R.id.bt_rating_ok);
+            btRatingOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (TextUtils.isEmpty(tvComment.getText().toString().trim())) {
+                        dialog.dismiss();
+                    } else {
+                        comment = tvComment.getText().toString().trim();
+                        new CommentProcess().execute();
+                        dialog.dismiss();
+
+                    }
+                }
+            });
+
+            dialog.show();
+
+        }
+    }
+
+    class CommentProcess extends AsyncTask<JSONObject, JSONObject, JSONObject> {
+
+        ProgressDialog progressDialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(context, "", "Loading. Please wait...", true);
+        }
+
+        @Override
+        protected JSONObject doInBackground(JSONObject... objects) {
+            JSONObject ratingObject = new JSONObject();
+            User user = userManager.getUser();
+
+            try {
+                ratingObject.put("userDocumentId",selectedDocumentId);
+                ratingObject.put("commentedById",user.getUserId());
+                ratingObject.put("comment",comment);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return apiManager.saveDocumentComment(ratingObject);
         }
 
         @Override

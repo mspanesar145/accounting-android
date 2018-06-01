@@ -17,11 +17,16 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.logo.R;
 import com.logo.application.LogoApplication;
 import com.logo.bo.User;
@@ -485,20 +490,35 @@ public class HomeActivity extends LogoActivity {
                 }
                 videoLinksPresent = false;
 
-                LinearLayout linearLayoutImageSection = new LinearLayout(HomeActivity.this);
-                linearLayoutImageSection.setLayoutParams(new LinearLayout.LayoutParams(LogoUtils.convertDpToPixel(85, getApplicationContext()), LogoUtils.convertDpToPixel(90, getApplicationContext())));
-                linearLayoutImageSection.setOrientation(LinearLayout.VERTICAL);
+                View linearLayoutImageSection = LayoutInflater.from(this).inflate(R.layout.item_images, null);
 
-                ImageView imageView = new ImageView(HomeActivity.this);
-                imageView.setLayoutParams(new android.view.ViewGroup.LayoutParams(LogoUtils.convertDpToPixel(80, getApplicationContext()), LogoUtils.convertDpToPixel(80, getApplicationContext())));
-                Glide.with(HomeActivity.this).load(jsonObject.getString("coverImageUrl")).into(imageView);
+                ImageView imageView = linearLayoutImageSection.findViewById(R.id.iv_images);
+                final ProgressBar mProgressBar = linearLayoutImageSection.findViewById(R.id.progress_bar);
 
-                TextView textView = new TextView(this);
-                textView.setTextSize(8);
+                Glide.with(HomeActivity.this)
+                        .load(jsonObject.getString("coverImageUrl"))
+                        .listener(new RequestListener<String, GlideDrawable>() {
+                            @Override
+                            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                if (null != mProgressBar) {
+                                    mProgressBar.setVisibility(View.GONE);
+                                }
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                if (null != mProgressBar) {
+                                    mProgressBar.setVisibility(View.GONE);
+                                }
+                                return false;
+                            }
+                        })
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(imageView);
+
+                TextView textView = linearLayoutImageSection.findViewById(R.id.tv_title);
                 textView.setText(jsonObject.getString("title"));
-
-                linearLayoutImageSection.addView(imageView);
-                linearLayoutImageSection.addView(textView);
 
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -513,17 +533,24 @@ public class HomeActivity extends LogoActivity {
                             webView.setVisibility(View.VISIBLE);
                             webView.getSettings().setJavaScriptEnabled(true);
                             webView.loadUrl(url);*/
-                            if (!TextUtils.isEmpty(url)) {
-                                if (AppUtil.isImage(url)) {
-                                    Intent webview = new Intent(HomeActivity.this, FullScreenImageActivity.class);
-                                    webview.putExtra("url", url);
-                                    startActivity(webview);
-                                } else {
-                                    Intent webview = new Intent(HomeActivity.this, WebViewActivity.class);
-                                    webview.putExtra("url", url);
-                                    startActivity(webview);
-                                }
+                            if (jsonObject != null) {
+                                Intent intent = new Intent(HomeActivity.this, ContentActivity.class);
+                                intent.putExtra(AppUtil.CATEGORY_ID, jsonObject.optInt(AppUtil.CATEGORY_ID));
+                                intent.putExtra(AppUtil.SUB_CATEGORY_ID, jsonObject.optInt(AppUtil.SUB_CATEGORY_ID));
+                                startActivity(intent);
+                                finish();
                             }
+//                            if (!TextUtils.isEmpty(url)) {
+//                                if (AppUtil.isImage(url)) {
+//                                    Intent webview = new Intent(HomeActivity.this, FullScreenImageActivity.class);
+//                                    webview.putExtra("url", url);
+//                                    startActivity(webview);
+//                                } else {
+//                                    Intent webview = new Intent(HomeActivity.this, WebViewActivity.class);
+//                                    webview.putExtra("url", url);
+//                                    startActivity(webview);
+//                                }
+//                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
