@@ -447,7 +447,7 @@ public class MyAccountActivity extends LogoActivity {
 
         for (Map.Entry categoryEntryMap : categoryMap.entrySet()) {
             try {
-                if (categoryEntryMap.getValue() == (Integer)myAccountJSON.getInt("mainCourseId")) {
+                if (String.valueOf(categoryEntryMap.getValue()).equalsIgnoreCase(myAccountJSON.getString("mainCourseId"))) {
                     for (int position=0; position < items.length; position++) {
                         if (categoryEntryMap.getKey().equals(items[position])) {
                             mainSpinner.setSelection(position);
@@ -462,7 +462,7 @@ public class MyAccountActivity extends LogoActivity {
         for (Map.Entry subCategoryEntryMap : subCategoryMap.entrySet()) {
             try {
                 Integer courseId = (Integer)myAccountJSON.getInt("secondryCourseId");
-                if (subCategoryEntryMap.getValue() == (Integer)myAccountJSON.getInt("secondryCourseId")) {
+                if (String.valueOf(subCategoryEntryMap.getValue()).equals(myAccountJSON.getString("secondryCourseId"))) {
                     for (int position=0; position < subItems.length; position++) {
                         if (subCategoryEntryMap.getKey().equals(subItems[position])) {
                             secondarySpinner.setSelection(position);
