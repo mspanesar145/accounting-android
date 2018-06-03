@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -22,6 +23,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.logo.R;
 import com.logo.application.LogoApplication;
+import com.logo.bo.CategoryWrapper;
+import com.logo.bo.MainCategoryListener;
 import com.logo.bo.User;
 import com.logo.coremanager.CoreManager;
 import com.logo.database.manager.UserManager;
@@ -32,17 +35,21 @@ import com.logo.services.manager.InternetManager;
 import com.logo.views.RoundedImageView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by mandeep on 23/4/18.
  */
 
-public class MyAccountActivity extends LogoActivity {
+public class MyAccountActivity extends LogoActivity implements MainCategoryListener {
 
     LogoApplication logoApplication;
     CoreManager coreManager;
@@ -62,6 +69,7 @@ public class MyAccountActivity extends LogoActivity {
     LinearLayout llBottomProfile,llBottomContent,llBottomHome;
     TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae;
     RoundedImageView riv_imageView;
+    TextView tvMainCategory, tvSubCategory;
 
 
     public Map<String,Integer> categoryMap,subCategoryMap;
@@ -125,10 +133,14 @@ public class MyAccountActivity extends LogoActivity {
         llBottomContent = (LinearLayout) findViewById(R.id.ll_bottom_content);
         llBottomProfile = (LinearLayout) findViewById(R.id.ll_bottom_profile);
         llBottomHome = (LinearLayout) findViewById(R.id.ll_bottom_home);
+        tvMainCategory = (TextView) findViewById(R.id.tv_main_category);
+        tvSubCategory = (TextView) findViewById(R.id.tv_sub_category);
 
         llBottomProfile.setOnClickListener(bottomProfileListener);
         llBottomContent.setOnClickListener(bottomContentListener);
         llBottomHome.setOnClickListener(bottomHomeListener);
+        tvMainCategory.setOnClickListener(mainCategoryListener);
+        tvSubCategory.setOnClickListener(subCategoryListener);
 
         mainSpinner.setOnItemSelectedListener(mainSpinnerListener);
         secondarySpinner.setOnItemSelectedListener(secondarySpinnerListener);
@@ -226,6 +238,38 @@ public class MyAccountActivity extends LogoActivity {
             }
             startActivity(new Intent(context,HomeActivity.class));
             finish();
+        }
+    };
+
+    View.OnClickListener mainCategoryListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            MainCategoryDialogFragment dialog = new MainCategoryDialogFragment();
+            dialog.setMainCategoryListener(MyAccountActivity.this);
+
+            Bundle bundle = new Bundle();
+
+            bundle.putSerializable("category", items);
+            dialog.setArguments(bundle);
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            dialog.show(ft, FullScreenDialog.TAG);
+        }
+    };
+
+    View.OnClickListener subCategoryListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            MainCategoryDialogFragment dialog = new MainCategoryDialogFragment();
+            dialog.setMainCategoryListener(MyAccountActivity.this);
+
+            Bundle bundle = new Bundle();
+
+            bundle.putStringArray("category", subItems);
+            dialog.setArguments(bundle);
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            dialog.show(ft, FullScreenDialog.TAG);
         }
     };
 
@@ -327,6 +371,24 @@ public class MyAccountActivity extends LogoActivity {
         }
     };
 
+    @Override
+    public void onMainCategorySelected(List<String> categories) {
+        StringBuilder builder = new StringBuilder();
+        for (String category : categories) {
+            if (builder.length() == 0) {
+                builder.append(category);
+            } else {
+                builder.append(",").append(category);
+            }
+        }
+        tvMainCategory.setText(builder);
+    }
+
+    @Override
+    public void onSubCategorySelected(List<String> subCategories) {
+
+    }
+
     class MyAccountProcess extends AsyncTask<JSONObject, JSONObject, JSONObject> {
         ProgressDialog progressDialog;
 
@@ -407,17 +469,15 @@ public class MyAccountActivity extends LogoActivity {
 
                     if (categoryMap == null) {
                         categoryMap = new HashMap<>();
-                        categoryMap.put("Select Category",0);
                     }
                     JSONArray categoriesArray = new JSONArray(pref.getString("categories", ""));           // Saving boolean - true/false
 
-                    items = new String[categoriesArray.length()+1];
-                    items[0] = "Select Category";
+                    items = new String[categoriesArray.length()];
                     for (int i=0; i<categoriesArray.length(); i++) {
                         JSONObject categoryObj = categoriesArray.getJSONObject(i);
                         try {
                             categoryMap.put(categoryObj.getString("name"),categoryObj.getInt("profileCategoryId"));
-                            items[i+1] = categoryObj.getString("name");
+                            items[i] = categoryObj.getString("name");
                             //create an adapter to describe how the items are displayed, adapters are used in several places in android.
                             //There are multiple variations of this, but this is the basic variant.
                         } catch (Exception e) {
@@ -445,24 +505,30 @@ public class MyAccountActivity extends LogoActivity {
 
     public void populateMyAccountData(JSONObject myAccountJSON) {
 
-        for (Map.Entry categoryEntryMap : categoryMap.entrySet()) {
-            try {
-                if (categoryEntryMap.getValue() == (Integer)myAccountJSON.getInt("mainCourseId")) {
-                    for (int position=0; position < items.length; position++) {
-                        if (categoryEntryMap.getKey().equals(items[position])) {
-                            mainSpinner.setSelection(position);
+        StringBuilder builder = new StringBuilder();
+        try {
+            String courseIds = myAccountJSON.getString("mainCourseId");
+            String[] selectedMainCategories = courseIds.split(",");
+            for (Map.Entry categoryEntryMap : categoryMap.entrySet()) {
+                    for (String selectedId : selectedMainCategories) {
+                        if (selectedId.equals(String.valueOf(categoryEntryMap.getValue()))) {
+                            if (builder.length() == 0) {
+                                builder.append(categoryEntryMap.getKey());
+                            } else {
+                                builder.append(",").append(categoryEntryMap.getKey());
+                            }
                         }
                     }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        tvMainCategory.setText(builder);
 
         for (Map.Entry subCategoryEntryMap : subCategoryMap.entrySet()) {
             try {
-                Integer courseId = (Integer)myAccountJSON.getInt("secondryCourseId");
-                if (subCategoryEntryMap.getValue() == (Integer)myAccountJSON.getInt("secondryCourseId")) {
+                String courseId = myAccountJSON.getString("secondryCourseId");
+                if (subCategoryEntryMap.getValue().equals(courseId)) {
                     for (int position=0; position < subItems.length; position++) {
                         if (subCategoryEntryMap.getKey().equals(subItems[position])) {
                             secondarySpinner.setSelection(position);
@@ -523,12 +589,11 @@ public class MyAccountActivity extends LogoActivity {
                             editor.commit();
 
                             String[] items = new String[jsonArray.length()+1];
-                            items[0] = "Select Category";
                             for (int i=0; i<jsonArray.length(); i++) {
                                 JSONObject subCategiryObj = jsonArray.getJSONObject(i);
                                 try {
                                     categoryMap.put(subCategiryObj.getString("name"),subCategiryObj.getInt("profileCategoryId"));
-                                    items[i+1] = subCategiryObj.getString("name");
+                                    items[i] = subCategiryObj.getString("name");
                                     //create an adapter to describe how the items are displayed, adapters are used in several places in android.
                                     //There are multiple variations of this, but this is the basic variant.
                                 } catch (Exception e) {
@@ -607,7 +672,6 @@ public class MyAccountActivity extends LogoActivity {
         try {
             if (subCategoryMap == null) {
                 subCategoryMap = new HashMap<>();
-                subCategoryMap.put("Select SubCategory",0);
             }
             SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
             JSONArray subCategoriesArray = new JSONArray(pref.getString("subCategories",""));
@@ -619,13 +683,12 @@ public class MyAccountActivity extends LogoActivity {
                         selectedCategoriesArray.put(subCategoryObj);
                     }
                 }
-                subItems = new String[selectedCategoriesArray.length()+1];
-                subItems[0] = "Select SubCategory";
+                subItems = new String[selectedCategoriesArray.length()];
                 for (int i=0; i<selectedCategoriesArray.length(); i++) {
                     JSONObject subCategiryObj = selectedCategoriesArray.getJSONObject(i);
                     try {
                         subCategoryMap.put(subCategiryObj.getString("name"),subCategiryObj.getInt("profileCategoryId"));
-                        subItems[i+1] = subCategiryObj.getString("name");
+                        subItems[i] = subCategiryObj.getString("name");
                         //create an adapter to describe how the items are displayed, adapters are used in several places in android.
                         //There are multiple variations of this, but this is the basic variant.
                     } catch (Exception e) {

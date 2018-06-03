@@ -1,8 +1,6 @@
 package com.logo.activity;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,15 +10,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.logo.R;
 import com.logo.adapters.CommentsAdapter;
-import com.logo.application.LogoApplication;
-import com.logo.bo.User;
-import com.logo.services.manager.ApiManager;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -29,9 +21,6 @@ import java.util.ArrayList;
  */
 
 public class ViewCommentFragment extends DialogFragment {
-
-    ApiManager apiManager;
-    String documentId;
 
     RecyclerView recComments;
     CommentsAdapter adapter;
