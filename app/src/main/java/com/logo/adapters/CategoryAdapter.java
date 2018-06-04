@@ -8,7 +8,10 @@ import android.view.ViewGroup;
 import android.widget.CheckedTextView;
 
 import com.logo.R;
+import com.logo.bo.CategoryListItem;
 import com.logo.bo.CategorySelectionListener;
+
+import java.util.List;
 
 /**
  * Created by deepaksingh on 03/06/18.
@@ -16,10 +19,10 @@ import com.logo.bo.CategorySelectionListener;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
 
-    private String[] mCategory;
+    private List<CategoryListItem> mCategory;
     private CategorySelectionListener mListener;
 
-    public CategoryAdapter(String[] category, CategorySelectionListener listener) {
+    public CategoryAdapter(List<CategoryListItem> category, CategorySelectionListener listener) {
         mCategory = category;
         mListener = listener;
     }
@@ -33,19 +36,20 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        holder.tvCategory.setText(mCategory[position]);
+        holder.tvCategory.setText(mCategory.get(position).getName());
+        holder.tvCategory.setChecked(mCategory.get(position).isSelected());
         holder.tvCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 holder.tvCategory.setChecked(!holder.tvCategory.isChecked());
-                mListener.onCategorySelected(holder.getAdapterPosition(), mCategory[holder.getAdapterPosition()]);
+                mListener.onCategorySelected(holder.getAdapterPosition(), mCategory.get(holder.getAdapterPosition()).getName());
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return mCategory.length;
+        return mCategory.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -63,13 +64,13 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
 
     ImageView ivUserImage;
     TextView tvUsername,tvEmail;
-    Spinner mainSpinner,secondarySpinner;
     Switch swSubScribe,swNotifications;
     Button btnSubmit;
     LinearLayout llBottomProfile,llBottomContent,llBottomHome;
     TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae;
     RoundedImageView riv_imageView;
     TextView tvMainCategory, tvSubCategory;
+    private List<Integer> selectedMainCourses, selectedSubCourses;
 
 
     public Map<String,Integer> categoryMap,subCategoryMap;
@@ -121,10 +122,6 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
         tvUsername = (TextView) findViewById(R.id.tv_usernmae);
         tvEmail = (TextView) findViewById(R.id.tv_email);
 
-
-        mainSpinner = (Spinner) findViewById(R.id.main_spinner);
-        secondarySpinner = (Spinner) findViewById(R.id.secondary_spinner);
-
         swSubScribe = (Switch) findViewById(R.id.sw_sub_newsletter);
         swNotifications = (Switch) findViewById(R.id.sw_receive_notification);
 
@@ -142,8 +139,6 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
         tvMainCategory.setOnClickListener(mainCategoryListener);
         tvSubCategory.setOnClickListener(subCategoryListener);
 
-        mainSpinner.setOnItemSelectedListener(mainSpinnerListener);
-        secondarySpinner.setOnItemSelectedListener(secondarySpinnerListener);
         btnSubmit.setOnClickListener(btnSubmitClickListener);
         swSubScribe.setOnCheckedChangeListener(swSubScribeListener);
         swNotifications.setOnCheckedChangeListener(swNotificationsListener);
@@ -244,12 +239,28 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
     View.OnClickListener mainCategoryListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            ArrayList<String> courses = new ArrayList<>();
+            if (null != categoryMap && null != selectedMainCourses) {
+                for (Map.Entry categoryEntryMap : categoryMap.entrySet()) {
+                    for (int i = 0; i < selectedMainCourses.size(); i++) {
+                        if (categoryEntryMap.getValue() == selectedMainCourses.get(i)) {
+                            courses.add(String.valueOf(categoryEntryMap.getKey()));
+                        }
+                    }
+                }
+            }
+
+            ArrayList<String> allMainCourses = new ArrayList<>();
+            allMainCourses.addAll(Arrays.asList(items));
+
             MainCategoryDialogFragment dialog = new MainCategoryDialogFragment();
             dialog.setMainCategoryListener(MyAccountActivity.this);
 
             Bundle bundle = new Bundle();
 
-            bundle.putSerializable("category", items);
+            bundle.putSerializable("category", allMainCourses);
+            bundle.putStringArrayList("selectedCourses", courses);
+            bundle.putBoolean("mainCourses", true);
             dialog.setArguments(bundle);
 
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -260,16 +271,52 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
     View.OnClickListener subCategoryListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            MainCategoryDialogFragment dialog = new MainCategoryDialogFragment();
-            dialog.setMainCategoryListener(MyAccountActivity.this);
+            if (null != selectedMainCourses && selectedMainCourses.size() > 0) {
+                // Get already selected sub-courses
+                ArrayList<String> subCourses = new ArrayList<>();
+                if (null != subCategoryMap && null != selectedSubCourses) {
+                    for (Map.Entry categoryEntryMap : subCategoryMap.entrySet()) {
+                        for (int i = 0; i < selectedSubCourses.size(); i++) {
+                            if (categoryEntryMap.getValue() == selectedSubCourses.get(i)) {
+                                subCourses.add(String.valueOf(categoryEntryMap.getKey()));
+                            }
+                        }
+                    }
+                }
+                // Get permissible sub-courses to show
+                ArrayList<String> subCategories = new ArrayList<>();
+                SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
+                try {
+                    JSONArray subCategoriesArray = new JSONArray(pref.getString("subCategories",""));
+                    for (int i = 0; i < subCategoriesArray.length(); i++) {
+                        JSONObject jsonObject = subCategoriesArray.optJSONObject(i);
+                        for (Integer selectedCourseId : selectedMainCourses) {
+                            if (jsonObject.optInt("parentCategoryId") == selectedCourseId) {
+                                subCategories.add(jsonObject.optString("name"));
+                            }
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-            Bundle bundle = new Bundle();
 
-            bundle.putStringArray("category", subItems);
-            dialog.setArguments(bundle);
+                MainCategoryDialogFragment dialog = new MainCategoryDialogFragment();
+                dialog.setMainCategoryListener(MyAccountActivity.this);
 
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            dialog.show(ft, FullScreenDialog.TAG);
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("category", subCategories);
+                bundle.putStringArrayList("selectedCourses", subCourses);
+                dialog.setArguments(bundle);
+
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                dialog.show(ft, FullScreenDialog.TAG);
+
+            } else {
+                if (null != alertManager) {
+                    alertManager.alert("Please select main course","Info", context,null);
+                }
+            }
         }
     };
 
@@ -330,63 +377,77 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
         }
     };
 
-    AdapterView.OnItemSelectedListener mainSpinnerListener = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            System.out.println(position);
-            try {
-                if (myAccountJSON != null) {
-                    myAccountJSON.put("mainCourseId",categoryMap.get(mainSpinner.getSelectedItem()));
-                    /*new SubCatgoriesTask().execute(myAccountJSON.getInt("mainCourseId"));*/
-                    populateSubCategories();
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-
-        }
-    };
-
-    AdapterView.OnItemSelectedListener secondarySpinnerListener = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            System.out.println(position);
-            try {
-                if (position != 0) {
-                    myAccountJSON.put("secondryCourseId",subCategoryMap.get(secondarySpinner.getItemAtPosition(position)));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-
-        }
-    };
-
     @Override
     public void onMainCategorySelected(List<String> categories) {
+        if (null == selectedMainCourses) {
+            selectedMainCourses = new ArrayList<>();
+        } else {
+            selectedMainCourses.clear();
+        }
         StringBuilder builder = new StringBuilder();
+        String idString = "";
         for (String category : categories) {
+            selectedMainCourses.add(categoryMap.get(category));
+            if (null != selectedSubCourses) {
+                selectedSubCourses.clear();
+                tvSubCategory.setText(getString(R.string.select_sub_cat));
+                myAccountJSON.remove("secondryCourseId");
+            }
+
+            if (idString.length() == 0) {
+                idString = String.valueOf(categoryMap.get(category));
+            } else {
+                idString = idString + "," + String.valueOf(categoryMap.get(category));
+            }
+
             if (builder.length() == 0) {
                 builder.append(category);
             } else {
                 builder.append(",").append(category);
             }
         }
+        try {
+            if (null != myAccountJSON) {
+                myAccountJSON.put("mainCourseId", idString);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         tvMainCategory.setText(builder);
     }
 
     @Override
     public void onSubCategorySelected(List<String> subCategories) {
+        if (null == selectedSubCourses) {
+            selectedSubCourses = new ArrayList<>();
+        } else {
+            selectedSubCourses.clear();
+        }
 
+        StringBuilder builder = new StringBuilder();
+        String idString = "";
+        for (String category : subCategories) {
+            selectedSubCourses.add(subCategoryMap.get(category));
+            if (idString.length() == 0) {
+                idString = String.valueOf(subCategoryMap.get(category));
+            } else {
+                idString = idString + "," + String.valueOf(subCategoryMap.get(category));
+            }
+
+            if (builder.length() == 0) {
+                builder.append(category);
+            } else {
+                builder.append(",").append(category);
+            }
+        }
+        try {
+            if (null != myAccountJSON) {
+                myAccountJSON.put("secondryCourseId", idString);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        tvSubCategory.setText(builder);
     }
 
     class MyAccountProcess extends AsyncTask<JSONObject, JSONObject, JSONObject> {
@@ -470,7 +531,12 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
                     if (categoryMap == null) {
                         categoryMap = new HashMap<>();
                     }
+                    if (subCategoryMap == null) {
+                        subCategoryMap = new HashMap<>();
+                    }
+
                     JSONArray categoriesArray = new JSONArray(pref.getString("categories", ""));           // Saving boolean - true/false
+                    JSONArray subCategoriesArray = new JSONArray(pref.getString("subCategories", ""));           // Saving boolean - true/false
 
                     items = new String[categoriesArray.length()];
                     for (int i=0; i<categoriesArray.length(); i++) {
@@ -478,18 +544,21 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
                         try {
                             categoryMap.put(categoryObj.getString("name"),categoryObj.getInt("profileCategoryId"));
                             items[i] = categoryObj.getString("name");
-                            //create an adapter to describe how the items are displayed, adapters are used in several places in android.
-                            //There are multiple variations of this, but this is the basic variant.
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
-                    ArrayAdapter<String> subAdapter = new ArrayAdapter<>(MyAccountActivity.this, android.R.layout.simple_spinner_dropdown_item, items);
-                    //set the spinners adapter to the previously created one.
-                    mainSpinner.setAdapter(subAdapter);
 
-                    populateSubCategories();
-
+                    subItems = new String[subCategoriesArray.length()];
+                    for (int i=0; i<subCategoriesArray.length(); i++) {
+                        JSONObject categoryObj = subCategoriesArray.getJSONObject(i);
+                        try {
+                            subCategoryMap.put(categoryObj.getString("name"),categoryObj.getInt("profileCategoryId"));
+                            subItems[i] = categoryObj.getString("name");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                     populateMyAccountData(myAccountJSON);
 
                 } else {
@@ -512,6 +581,10 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
             for (Map.Entry categoryEntryMap : categoryMap.entrySet()) {
                     for (String selectedId : selectedMainCategories) {
                         if (selectedId.equals(String.valueOf(categoryEntryMap.getValue()))) {
+                            if (null == selectedMainCourses) {
+                                selectedMainCourses = new ArrayList<>();
+                            }
+                            selectedMainCourses.add(Integer.parseInt(selectedId));
                             if (builder.length() == 0) {
                                 builder.append(categoryEntryMap.getKey());
                             } else {
@@ -525,21 +598,30 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
         }
         tvMainCategory.setText(builder);
 
-        for (Map.Entry subCategoryEntryMap : subCategoryMap.entrySet()) {
-            try {
-                String courseId = myAccountJSON.getString("secondryCourseId");
-                if (subCategoryEntryMap.getValue().equals(courseId)) {
-                    for (int position=0; position < subItems.length; position++) {
-                        if (subCategoryEntryMap.getKey().equals(subItems[position])) {
-                            secondarySpinner.setSelection(position);
-                            break;
+        StringBuilder secondaryBuilder = new StringBuilder();
+        try {
+            String secondaryCourseIds = myAccountJSON.getString("secondryCourseId");
+            String[] selectedSecondayCategories = secondaryCourseIds.split(",");
+
+            for (Map.Entry subCategoryEntryMap : subCategoryMap.entrySet()) {
+                for (String selectedId : selectedSecondayCategories) {
+                    if (selectedId.equals(String.valueOf(subCategoryEntryMap.getValue()))) {
+                        if (null == selectedSubCourses) {
+                            selectedSubCourses = new ArrayList<>();
+                        }
+                        selectedSubCourses.add(Integer.parseInt(selectedId));
+                        if (secondaryBuilder.length() == 0) {
+                            secondaryBuilder.append(subCategoryEntryMap.getKey());
+                        } else {
+                            secondaryBuilder.append(",").append(subCategoryEntryMap.getKey());
                         }
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        tvSubCategory.setText(secondaryBuilder);
 
         try {
             swSubScribe.setChecked(myAccountJSON.getBoolean("newsLetterSubscribed"));
@@ -576,7 +658,6 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
 
             try {
                 if (jsonArray != null && jsonArray.length() > 0) {
-                    System.out.print(jsonArray);
                     try {
                         categoryMap =  new HashMap<>();
 
@@ -588,7 +669,7 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
                             editor.putString("categories", jsonArray.toString());           // Saving boolean - true/false
                             editor.commit();
 
-                            String[] items = new String[jsonArray.length()+1];
+                            items = new String[jsonArray.length()];
                             for (int i=0; i<jsonArray.length(); i++) {
                                 JSONObject subCategiryObj = jsonArray.getJSONObject(i);
                                 try {
@@ -600,9 +681,6 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
                                     e.printStackTrace();
                                 }
                             }
-                            ArrayAdapter<String> subAdapter = new ArrayAdapter<>(MyAccountActivity.this, android.R.layout.simple_spinner_dropdown_item, items);
-                            //set the spinners adapter to the previously created one.
-                            mainSpinner.setAdapter(subAdapter);
 
                         } else {
                             //alertManager.alert("Something wrong", "Server error", context, null);
@@ -651,12 +729,23 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
                 subCategoryMap =  new HashMap<>();
 
                 if (jsonArray != null && jsonArray.length() > 0) {
-                    System.out.print(jsonArray);
-
                     SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
                     SharedPreferences.Editor editor = pref.edit();
                     editor.putString("subCategories", jsonArray.toString());           // Saving boolean - true/false
                     editor.commit();
+
+                    subItems = new String[jsonArray.length()];
+                    for (int i=0; i<jsonArray.length(); i++) {
+                        JSONObject subCategiryObj = jsonArray.getJSONObject(i);
+                        try {
+                            subCategoryMap.put(subCategiryObj.getString("name"),subCategiryObj.getInt("profileCategoryId"));
+                            subItems[i] = subCategiryObj.getString("name");
+                            //create an adapter to describe how the items are displayed, adapters are used in several places in android.
+                            //There are multiple variations of this, but this is the basic variant.
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
 
                 } else {
                     //alertManager.alert("Something wrong", "Server error", context, null);
@@ -668,56 +757,52 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
         }
     }
 
-    public void populateSubCategories() {
-        try {
-            if (subCategoryMap == null) {
-                subCategoryMap = new HashMap<>();
-            }
-            SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
-            JSONArray subCategoriesArray = new JSONArray(pref.getString("subCategories",""));
-            if (subCategoriesArray != null) {
-                JSONArray selectedCategoriesArray = new JSONArray();
-                for (int i=0; i< subCategoriesArray.length(); i++) {
-                    JSONObject subCategoryObj = subCategoriesArray.getJSONObject(i);
-                    if (subCategoryObj.getInt("parentCategoryId") == myAccountJSON.getInt("mainCourseId")) {
-                        selectedCategoriesArray.put(subCategoryObj);
-                    }
-                }
-                subItems = new String[selectedCategoriesArray.length()];
-                for (int i=0; i<selectedCategoriesArray.length(); i++) {
-                    JSONObject subCategiryObj = selectedCategoriesArray.getJSONObject(i);
-                    try {
-                        subCategoryMap.put(subCategiryObj.getString("name"),subCategiryObj.getInt("profileCategoryId"));
-                        subItems[i] = subCategiryObj.getString("name");
-                        //create an adapter to describe how the items are displayed, adapters are used in several places in android.
-                        //There are multiple variations of this, but this is the basic variant.
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                ArrayAdapter<String> subAdapter = new ArrayAdapter<>(MyAccountActivity.this, android.R.layout.simple_spinner_dropdown_item, subItems);
-                //set the spinners adapter to the previously created one.
-                secondarySpinner.setAdapter(subAdapter);
-
-                for (Map.Entry subCategoryEntryMap : subCategoryMap.entrySet()) {
-                    try {
-                        Integer courseId = (Integer)myAccountJSON.getInt("secondryCourseId");
-                        if (subCategoryEntryMap.getValue() == (Integer)myAccountJSON.getInt("secondryCourseId")) {
-                            for (int position=0; position < subItems.length; position++) {
-                                if (subCategoryEntryMap.getKey().equals(subItems[position])) {
-                                    secondarySpinner.setSelection(position);
-                                    break;
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    public void populateSubCategories() {
+//        try {
+//            if (subCategoryMap == null) {
+//                subCategoryMap = new HashMap<>();
+//            }
+//            SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
+//            JSONArray subCategoriesArray = new JSONArray(pref.getString("subCategories",""));
+//            if (subCategoriesArray != null) {
+//                JSONArray selectedCategoriesArray = new JSONArray();
+//                for (int i=0; i< subCategoriesArray.length(); i++) {
+//                    JSONObject subCategoryObj = subCategoriesArray.getJSONObject(i);
+//                    if (subCategoryObj.getInt("parentCategoryId") == myAccountJSON.getInt("mainCourseId")) {
+//                        selectedCategoriesArray.put(subCategoryObj);
+//                    }
+//                }
+//                subItems = new String[selectedCategoriesArray.length()];
+//                for (int i=0; i<selectedCategoriesArray.length(); i++) {
+//                    JSONObject subCategiryObj = selectedCategoriesArray.getJSONObject(i);
+//                    try {
+//                        subCategoryMap.put(subCategiryObj.getString("name"),subCategiryObj.getInt("profileCategoryId"));
+//                        subItems[i] = subCategiryObj.getString("name");
+//                        //create an adapter to describe how the items are displayed, adapters are used in several places in android.
+//                        //There are multiple variations of this, but this is the basic variant.
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//
+//                for (Map.Entry subCategoryEntryMap : subCategoryMap.entrySet()) {
+//                    try {
+//                        Integer courseId = (Integer)myAccountJSON.getInt("secondryCourseId");
+//                        if (subCategoryEntryMap.getValue() == (Integer)myAccountJSON.getInt("secondryCourseId")) {
+//                            for (int position=0; position < subItems.length; position++) {
+//                                if (subCategoryEntryMap.getKey().equals(subItems[position])) {
+//                                    break;
+//                                }
+//                            }
+//                        }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

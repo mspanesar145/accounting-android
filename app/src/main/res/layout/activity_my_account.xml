@@ -117,16 +117,6 @@
                                 android:text="@string/select_main_cat"
                                 android:gravity="center_vertical" />
 
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="0.5dp"
-                                android:background="@android:color/darker_gray"/>
-
-                            <Spinner
-                                android:id="@+id/main_spinner"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
-
                         </LinearLayout>
 
                         <LinearLayout
@@ -150,16 +140,6 @@
                                 android:drawableRight="@drawable/ic_chevron_black"
                                 android:text="@string/select_sub_cat"
                                 android:gravity="center_vertical" />
-
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="0.5dp"
-                                android:background="@android:color/darker_gray"/>
-
-                            <Spinner
-                                android:id="@+id/secondary_spinner"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
 
                         </LinearLayout>
 

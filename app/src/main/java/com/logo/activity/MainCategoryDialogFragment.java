@@ -14,6 +14,7 @@ import android.widget.Button;
 
 import com.logo.R;
 import com.logo.adapters.CategoryAdapter;
+import com.logo.bo.CategoryListItem;
 import com.logo.bo.CategorySelectionListener;
 import com.logo.bo.CategoryWrapper;
 import com.logo.bo.MainCategoryListener;
@@ -31,6 +32,7 @@ public class MainCategoryDialogFragment extends DialogFragment implements Catego
     Button btnDone;
     MainCategoryListener mainCategoryListener;
     private List<String> tempCategoryNames;
+    boolean isMainCategory;
 
     @Override
     public void onStart() {
@@ -60,11 +62,27 @@ public class MainCategoryDialogFragment extends DialogFragment implements Catego
         btnDone = (Button) view.findViewById(R.id.bt_done);
 
         recCategories.setLayoutManager(new LinearLayoutManager(getActivity()));
+        isMainCategory = getArguments().getBoolean("mainCourses", false);
+        if (getArguments().containsKey("category")) {
+            ArrayList<String> category = getArguments().getStringArrayList("category");
+            ArrayList<String> selectedCourses = getArguments().getStringArrayList("selectedCourses");
+            if (tempCategoryNames == null) {
+                tempCategoryNames = new ArrayList<>();
+            }
+            tempCategoryNames.addAll(selectedCourses);
 
-        if (null != getArguments() && getArguments().containsKey("category")) {
-            String[] category = getArguments().getStringArray("category");
-
-            CategoryAdapter adapter = new CategoryAdapter(category,this);
+            List<CategoryListItem> categoryListItems = new ArrayList<>();
+            for (String course : category) {
+                boolean isExist = false;
+                for (String selectedCourse : selectedCourses) {
+                    if (course.equals(selectedCourse)) {
+                        isExist = true;
+                        break;
+                    }
+                }
+                categoryListItems.add(new CategoryListItem(course, isExist));
+            }
+            CategoryAdapter adapter = new CategoryAdapter(categoryListItems,this);
             recCategories.setAdapter(adapter);
         }
 
@@ -72,7 +90,11 @@ public class MainCategoryDialogFragment extends DialogFragment implements Catego
             @Override
             public void onClick(View v) {
                 if (null != mainCategoryListener) {
-                    mainCategoryListener.onMainCategorySelected(tempCategoryNames);
+                    if (isMainCategory) {
+                        mainCategoryListener.onMainCategorySelected(tempCategoryNames);
+                    } else {
+                        mainCategoryListener.onSubCategorySelected(tempCategoryNames);
+                    }
                 }
                 dismissAllowingStateLoss();
             }

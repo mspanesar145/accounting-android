@@ -413,7 +413,7 @@ public class ContentActivity extends LogoActivity {
                     }
                 });
 
-                holder.ratingBar.setRating((float) jsonObject.getInt("overallRating"));
+                holder.ratingBar.setRating((float) jsonObject.optInt("overallRating"));
 
 
                 holder.btRate.setOnClickListener(new View.OnClickListener() {
