@@ -7,16 +7,12 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +20,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.logo.R;
 import com.logo.application.LogoApplication;
-import com.logo.bo.CategoryWrapper;
 import com.logo.bo.MainCategoryListener;
 import com.logo.bo.User;
 import com.logo.coremanager.CoreManager;
@@ -38,7 +33,6 @@ import com.logo.views.RoundedImageView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -253,7 +247,7 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
             ArrayList<String> allMainCourses = new ArrayList<>();
             allMainCourses.addAll(Arrays.asList(items));
 
-            MainCategoryDialogFragment dialog = new MainCategoryDialogFragment();
+            SelectCourseDialogFragment dialog = new SelectCourseDialogFragment();
             dialog.setMainCategoryListener(MyAccountActivity.this);
 
             Bundle bundle = new Bundle();
@@ -301,7 +295,7 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
                 }
 
 
-                MainCategoryDialogFragment dialog = new MainCategoryDialogFragment();
+                SelectCourseDialogFragment dialog = new SelectCourseDialogFragment();
                 dialog.setMainCategoryListener(MyAccountActivity.this);
 
                 Bundle bundle = new Bundle();
@@ -379,75 +373,96 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
 
     @Override
     public void onMainCategorySelected(List<String> categories) {
-        if (null == selectedMainCourses) {
-            selectedMainCourses = new ArrayList<>();
+        if (null != categories && categories.size() > 0){
+            if (null == selectedMainCourses) {
+                selectedMainCourses = new ArrayList<>();
+            } else {
+                selectedMainCourses.clear();
+            }
+            StringBuilder builder = new StringBuilder();
+            String idString = "";
+            for (String category : categories) {
+                selectedMainCourses.add(categoryMap.get(category));
+                if (null != selectedSubCourses) {
+                    selectedSubCourses.clear();
+                    tvSubCategory.setText(getString(R.string.select_sub_cat));
+                    myAccountJSON.remove("secondryCourseId");
+                }
+
+                if (idString.length() == 0) {
+                    idString = String.valueOf(categoryMap.get(category));
+                } else {
+                    idString = idString + "," + String.valueOf(categoryMap.get(category));
+                }
+
+                if (builder.length() == 0) {
+                    builder.append(category);
+                } else {
+                    builder.append(",").append(category);
+                }
+            }
+            try {
+                if (null != myAccountJSON) {
+                    myAccountJSON.put("mainCourseId", idString);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            tvMainCategory.setText(builder);
         } else {
-            selectedMainCourses.clear();
-        }
-        StringBuilder builder = new StringBuilder();
-        String idString = "";
-        for (String category : categories) {
-            selectedMainCourses.add(categoryMap.get(category));
+            tvMainCategory.setText(getString(R.string.select_main_cat));
+            tvSubCategory.setText(getString(R.string.select_sub_cat));
+            myAccountJSON.remove("mainCourseId");
+            myAccountJSON.remove("secondryCourseId");
+            if (null != selectedMainCourses) {
+                selectedMainCourses.clear();
+            }
             if (null != selectedSubCourses) {
                 selectedSubCourses.clear();
-                tvSubCategory.setText(getString(R.string.select_sub_cat));
-                myAccountJSON.remove("secondryCourseId");
-            }
-
-            if (idString.length() == 0) {
-                idString = String.valueOf(categoryMap.get(category));
-            } else {
-                idString = idString + "," + String.valueOf(categoryMap.get(category));
-            }
-
-            if (builder.length() == 0) {
-                builder.append(category);
-            } else {
-                builder.append(",").append(category);
             }
         }
-        try {
-            if (null != myAccountJSON) {
-                myAccountJSON.put("mainCourseId", idString);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        tvMainCategory.setText(builder);
     }
 
     @Override
     public void onSubCategorySelected(List<String> subCategories) {
-        if (null == selectedSubCourses) {
-            selectedSubCourses = new ArrayList<>();
+        if (null != subCategories && subCategories.size() > 0) {
+            if (null == selectedSubCourses) {
+                selectedSubCourses = new ArrayList<>();
+            } else {
+                selectedSubCourses.clear();
+            }
+
+            StringBuilder builder = new StringBuilder();
+            String idString = "";
+            for (String category : subCategories) {
+                selectedSubCourses.add(subCategoryMap.get(category));
+                if (idString.length() == 0) {
+                    idString = String.valueOf(subCategoryMap.get(category));
+                } else {
+                    idString = idString + "," + String.valueOf(subCategoryMap.get(category));
+                }
+
+                if (builder.length() == 0) {
+                    builder.append(category);
+                } else {
+                    builder.append(",").append(category);
+                }
+            }
+            try {
+                if (null != myAccountJSON) {
+                    myAccountJSON.put("secondryCourseId", idString);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            tvSubCategory.setText(builder);
         } else {
-            selectedSubCourses.clear();
-        }
-
-        StringBuilder builder = new StringBuilder();
-        String idString = "";
-        for (String category : subCategories) {
-            selectedSubCourses.add(subCategoryMap.get(category));
-            if (idString.length() == 0) {
-                idString = String.valueOf(subCategoryMap.get(category));
-            } else {
-                idString = idString + "," + String.valueOf(subCategoryMap.get(category));
-            }
-
-            if (builder.length() == 0) {
-                builder.append(category);
-            } else {
-                builder.append(",").append(category);
+            tvSubCategory.setText(getString(R.string.select_sub_cat));
+            myAccountJSON.remove("secondryCourseId");
+            if (null != selectedSubCourses) {
+                selectedSubCourses.clear();
             }
         }
-        try {
-            if (null != myAccountJSON) {
-                myAccountJSON.put("secondryCourseId", idString);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        tvSubCategory.setText(builder);
     }
 
     class MyAccountProcess extends AsyncTask<JSONObject, JSONObject, JSONObject> {

@@ -26,8 +26,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider"
-        app:layout_constraintBottom_toTopOf="@+id/bt_done"
-        android:layout_marginTop="20dp"/>
+        app:layout_constraintBottom_toTopOf="@+id/bt_done" />
     <Button
         android:id="@+id/bt_done"
         android:layout_width="0dp"

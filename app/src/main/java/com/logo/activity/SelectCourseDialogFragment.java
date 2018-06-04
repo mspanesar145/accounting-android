@@ -16,7 +16,6 @@ import com.logo.R;
 import com.logo.adapters.CategoryAdapter;
 import com.logo.bo.CategoryListItem;
 import com.logo.bo.CategorySelectionListener;
-import com.logo.bo.CategoryWrapper;
 import com.logo.bo.MainCategoryListener;
 
 import java.util.ArrayList;
@@ -26,13 +25,16 @@ import java.util.List;
  * Created by deepaksingh on 03/06/18.
  */
 
-public class MainCategoryDialogFragment extends DialogFragment implements CategorySelectionListener {
+public class SelectCourseDialogFragment extends DialogFragment implements CategorySelectionListener {
 
     RecyclerView recCategories;
     Button btnDone;
     MainCategoryListener mainCategoryListener;
     private List<String> tempCategoryNames;
     boolean isMainCategory;
+
+    CategoryAdapter adapter;
+    List<CategoryListItem> categoryListItems;
 
     @Override
     public void onStart() {
@@ -51,7 +53,7 @@ public class MainCategoryDialogFragment extends DialogFragment implements Catego
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_select_categories, container, false);
+        View view = getActivity().getLayoutInflater().inflate(R.layout.fragment_select_courses, container, false);
         return view;
     }
 
@@ -71,7 +73,7 @@ public class MainCategoryDialogFragment extends DialogFragment implements Catego
             }
             tempCategoryNames.addAll(selectedCourses);
 
-            List<CategoryListItem> categoryListItems = new ArrayList<>();
+            categoryListItems = new ArrayList<>();
             for (String course : category) {
                 boolean isExist = false;
                 for (String selectedCourse : selectedCourses) {
@@ -82,7 +84,7 @@ public class MainCategoryDialogFragment extends DialogFragment implements Catego
                 }
                 categoryListItems.add(new CategoryListItem(course, isExist));
             }
-            CategoryAdapter adapter = new CategoryAdapter(categoryListItems,this);
+            adapter = new CategoryAdapter(categoryListItems,this);
             recCategories.setAdapter(adapter);
         }
 
@@ -110,6 +112,12 @@ public class MainCategoryDialogFragment extends DialogFragment implements Catego
             tempCategoryNames.add(name);
         } else {
             tempCategoryNames.remove(name);
+        }
+        if (null != categoryListItems) {
+            categoryListItems.get(pos).setSelected(!categoryListItems.get(pos).isSelected());
+        }
+        if (null != adapter) {
+            adapter.notifyDataSetChanged();
         }
     }
 

@@ -41,7 +41,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         holder.tvCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.tvCategory.setChecked(!holder.tvCategory.isChecked());
                 mListener.onCategorySelected(holder.getAdapterPosition(), mCategory.get(holder.getAdapterPosition()).getName());
             }
         });
