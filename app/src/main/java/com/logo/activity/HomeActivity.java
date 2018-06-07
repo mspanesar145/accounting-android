@@ -189,7 +189,10 @@ public class HomeActivity extends LogoActivity {
     View.OnClickListener bottomContentListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            startActivity(new Intent(HomeActivity.this, ContentActivity.class));
+            UserManager userManager = getLogoApplication().getCoreManager().getUserManager();
+            Intent intent = new Intent(HomeActivity.this, ContentActivity.class);
+            intent.putExtra("createdById", userManager.getUser().getUserId());
+            startActivity(intent);
             finish();
         }
     };

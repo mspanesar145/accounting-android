@@ -39,6 +39,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.logo.R;
 import com.logo.application.LogoApplication;
 import com.logo.bo.User;
@@ -58,6 +66,7 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class SignUpActivity extends LogoActivity  {
 
+    private static final String TAG = "GOOGLE_PLACES";
     LogoApplication logoApplication;
     CoreManager coreManager;
     UserManager userManager;
@@ -76,6 +85,7 @@ public class SignUpActivity extends LogoActivity  {
 
     String firstName="",lastName="",age="",mobile="",gender="",email="",city="",password="";
     boolean isGenderSelected = false;
+    int PLACE_AUTOCOMPLETE_REQUEST_CODE = 11;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +117,7 @@ public class SignUpActivity extends LogoActivity  {
         buttonSignUp = (Button) findViewById(R.id.bt_signup);
 
         imageViewBack.setOnClickListener(onClickListener);
+        editTextCity.setOnClickListener(citySearchListener);
         buttonSignUp.setOnClickListener(onClickListener);
     }
 
@@ -138,6 +149,29 @@ public class SignUpActivity extends LogoActivity  {
                 finish();
             }else if(v.getId() == R.id.bt_signup){
                 validation();
+            }
+        }
+    };
+
+    OnClickListener citySearchListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            try {
+                AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                        .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
+                        .build();
+
+                Intent intent =
+                        new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
+                                .setBoundsBias(new LatLngBounds(new LatLng(23.63936, 68.14712)
+                                        , new LatLng(28.20453, 97.34466)))
+                                .setFilter(typeFilter)
+                                .build(SignUpActivity.this);
+                startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+            } catch (GooglePlayServicesRepairableException e) {
+                e.printStackTrace();
+            } catch (GooglePlayServicesNotAvailableException e) {
+                e.printStackTrace();
             }
         }
     };
@@ -221,10 +255,30 @@ public class SignUpActivity extends LogoActivity  {
                 user.setPassword(password);
                 user.setFirstName(firstName);
                 user.setLastName(lastName);
+                user.setPhone(password);
+                user.setCity(city);
                 new SignUpProcess().execute();
 
             }else{
                 alertManager.alert("Please check your Internet","Info",this,null);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(this, data);
+                editTextCity.setText(place.getName());
+                Log.i(TAG, "Place: " + place.getName());
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(this, data);
+                // TODO: Handle the error.
+                Log.i(TAG, status.getStatusMessage());
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
             }
         }
     }
@@ -246,20 +300,7 @@ public class SignUpActivity extends LogoActivity  {
         @Override
         protected Object doInBackground(Object... objects) {
             JSONObject jsonObject = null;
-
-
-
-
-
-
-
-
-
-
-
-
             jsonObject = apiManager.signUpApi(user);
-
             return jsonObject;
         }
 

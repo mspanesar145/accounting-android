@@ -556,6 +556,15 @@ public class LoginActivity extends LogoActivity {
                             } else {
                                 user.setAuthToken("");
                             }
+                            if (jsonObject.has(user.CITY)) {
+                                user.setCity(jsonObject.getString(user.CITY));
+                            }
+                            if (jsonObject.has(user.PHONE)) {
+                                user.setPhone(jsonObject.getString(user.PHONE));
+                            }
+                            if (jsonObject.has("myAccounts")) {
+                                user.setMyAccounts(jsonObject.getJSONArray("myAccounts"));
+                            }
 
                             userManager.addUser(user);
 

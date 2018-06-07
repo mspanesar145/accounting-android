@@ -9,23 +9,24 @@ import java.io.File;
 
 public interface ApiManager {
 
-    public JSONObject signInApi(User user);
-    public JSONObject signUpApi(User user);
-    public JSONObject saveUserDocument(JSONObject jsonObject);
-    public JSONArray findAllUserDocuments();
-    public JSONObject findTopTenDocuments(int userId);
-    public JSONObject saveCoverImage(int userId, File file);
-    public JSONObject saveMyAccount(JSONObject jsonObject);
-    public JSONArray findAllUserDocumentsByCategoryIdAndSubCategoryIdAndNullContentLink(String queryStr);
-    public JSONArray findDocumentById(String queryStr);
-    public JSONObject findMyAccountByCreatedById(String queryStr);
-    public JSONObject saveDocumentRating(JSONObject postData);
-    public JSONObject saveDocumentComment(JSONObject postData);
-    public JSONArray findMainCategories();
-    public JSONArray findSubCatgories();
-    public JSONObject facebookSignInApi(JSONObject postData);
-    public JSONObject googleSignInApi(JSONObject postData);
-    public JSONArray findBannersForLogin(String screenName);
-    public JSONArray findCommentsById(String documentId);
+    JSONObject signInApi(User user);
+    JSONObject signUpApi(User user);
+    JSONObject saveUserDocument(JSONObject jsonObject);
+    JSONArray findAllUserDocuments();
+    JSONObject findTopTenDocuments(int userId);
+    JSONObject saveCoverImage(int userId, File file);
+    JSONObject saveMyAccount(JSONObject jsonObject);
+    JSONArray findAllUserDocumentsByCategoryIdAndSubCategoryIdAndNullContentLink(String queryStr);
+    JSONArray findDocumentById(String queryStr);
+    JSONObject findMyAccountByCreatedById(String queryStr);
+    JSONObject saveDocumentRating(JSONObject postData);
+    JSONObject saveDocumentComment(JSONObject postData);
+    JSONArray findMainCategories();
+    JSONArray findSubCatgories();
+    JSONObject facebookSignInApi(JSONObject postData);
+    JSONObject googleSignInApi(JSONObject postData);
+    JSONArray findBannersForLogin(String screenName);
+    JSONArray findCommentsById(String documentId);
+    JSONObject updateDocumentViewCount(JSONObject object);
 
 }

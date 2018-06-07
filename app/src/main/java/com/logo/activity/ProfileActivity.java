@@ -388,7 +388,10 @@ public class ProfileActivity extends LogoActivity {
     View.OnClickListener bottomContentListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            startActivity(new Intent(context, ContentActivity.class));
+            UserManager userManager = getLogoApplication().getCoreManager().getUserManager();
+            Intent intent = new Intent(ProfileActivity.this, ContentActivity.class);
+            intent.putExtra("createdById", userManager.getUser().getUserId());
+            startActivity(intent);
             finish();
         }
     };

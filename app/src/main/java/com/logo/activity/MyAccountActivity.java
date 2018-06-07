@@ -7,10 +7,13 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -18,6 +21,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.logo.R;
 import com.logo.application.LogoApplication;
 import com.logo.bo.MainCategoryListener;
@@ -58,6 +71,7 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
 
     ImageView ivUserImage;
     TextView tvUsername,tvEmail;
+    EditText etMobile,etEmail,etCity;
     Switch swSubScribe,swNotifications;
     Button btnSubmit;
     LinearLayout llBottomProfile,llBottomContent,llBottomHome;
@@ -65,6 +79,7 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
     RoundedImageView riv_imageView;
     TextView tvMainCategory, tvSubCategory;
     private List<Integer> selectedMainCourses, selectedSubCourses;
+    int PLACE_AUTOCOMPLETE_REQUEST_CODE = 11;
 
 
     public Map<String,Integer> categoryMap,subCategoryMap;
@@ -89,7 +104,13 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
         user = userManager.getUser();
         if (user != null) {
             tvUsername.setText(user.getFirstName()+" "+user.getLastName());
-            tvEmail.setText(user.getEmail());
+//            tvEmail.setText(user.getEmail());
+            etMobile.setText(user.getPhone());
+            etMobile.setSelection(etMobile.getText().length());
+            etEmail.setText(user.getEmail());
+            if (!TextUtils.isEmpty(user.getCity())) {
+                etCity.setText(user.getCity());
+            }
         }
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
@@ -114,7 +135,10 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
         context = this;
         //ivUserImage = (ImageView) findViewById(R.id.iv_user_image);
         tvUsername = (TextView) findViewById(R.id.tv_usernmae);
-        tvEmail = (TextView) findViewById(R.id.tv_email);
+//        tvEmail = (TextView) findViewById(R.id.tv_email);
+        etMobile = (EditText) findViewById(R.id.et_mobile);
+        etEmail = (EditText) findViewById(R.id.et_email);
+        etCity = (EditText) findViewById(R.id.et_city);
 
         swSubScribe = (Switch) findViewById(R.id.sw_sub_newsletter);
         swNotifications = (Switch) findViewById(R.id.sw_receive_notification);
@@ -132,6 +156,7 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
         llBottomHome.setOnClickListener(bottomHomeListener);
         tvMainCategory.setOnClickListener(mainCategoryListener);
         tvSubCategory.setOnClickListener(subCategoryListener);
+        etCity.setOnClickListener(citySearchListener);
 
         btnSubmit.setOnClickListener(btnSubmitClickListener);
         swSubScribe.setOnCheckedChangeListener(swSubScribeListener);
@@ -141,7 +166,10 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
         listTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MyAccountActivity.this,ContentActivity.class));
+                UserManager userManager = getLogoApplication().getCoreManager().getUserManager();
+                Intent intent = new Intent(MyAccountActivity.this, ContentActivity.class);
+                intent.putExtra("createdById", userManager.getUser().getUserId());
+                startActivity(intent);
                 finish();
             }
         });
@@ -324,23 +352,67 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
                 alertManager.alert("Please select secondary course","Info", context,null);
                 return false;
             }
+            if (TextUtils.isEmpty(etMobile.getText().toString().trim())) {
+                alertManager.alert("Mobile no. cannot be left empty","Info", context,null);
+                return false;
+            }
+            if (TextUtils.isEmpty(etEmail.getText().toString().trim())) {
+                alertManager.alert("Email Id cannot be left empty","Info", context,null);
+                return false;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return true;
     }
 
+    View.OnClickListener citySearchListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            try {
+                AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                        .setTypeFilter(AutocompleteFilter.TYPE_FILTER_CITIES)
+                        .build();
+
+                Intent intent =
+                        new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
+                                .setBoundsBias(new LatLngBounds(new LatLng(23.63936, 68.14712)
+                                        , new LatLng(28.20453, 97.34466)))
+                                .setFilter(typeFilter)
+                                .build(MyAccountActivity.this);
+                startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+            } catch (GooglePlayServicesRepairableException e) {
+                e.printStackTrace();
+            } catch (GooglePlayServicesNotAvailableException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
     View.OnClickListener btnSubmitClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (validateMyAccount()) {
-                User user = userManager.getUser();
-                try {
-                    myAccountJSON.put("createdById",user.getUserId());
-                    new MyAccountProcess().execute(myAccountJSON);
+                if (null != user) {
+                    user.setEmail(etEmail.getText().toString().trim());
+                    user.setPhone(etMobile.getText().toString().trim());
+                    user.setPassword(etMobile.getText().toString().trim());
+                    user.setCity(etCity.getText().toString().trim());
+                    try {
+                        myAccountJSON.put("createdById",user.getUserId());
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                        JSONObject jsonObject = new JSONObject(new Gson().toJson(user));
+
+                        JSONArray array = new JSONArray();
+                        array.put(myAccountJSON);
+                        jsonObject.put("myAccounts", array);
+
+
+                        new MyAccountProcess().execute(jsonObject);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -370,6 +442,19 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
             }
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(this, data);
+                etCity.setText(place.getName());
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(this, data);
+                Toast.makeText(this, status.getStatusMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     @Override
     public void onMainCategorySelected(List<String> categories) {
@@ -496,6 +581,11 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
                     SharedPreferences.Editor editor = pref.edit();
                     editor.putBoolean("myAccountExists", true);           // Saving boolean - true/false
                     editor.commit();
+
+                    User user = new Gson().fromJson(jsonObject.optJSONObject("data").toString(), User.class);
+
+                    userManager.deleteUser();
+                    userManager.addUser(user);
 
                     startActivity(new Intent(MyAccountActivity.this,HomeActivity.class));
                     finish();

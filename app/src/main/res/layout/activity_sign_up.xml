@@ -147,7 +147,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/edittext_design_signup"
-                            android:editable="false"
+                            android:inputType="none"
+                            android:focusableInTouchMode="false"
                             android:hint="+91"
                             android:padding="15dp" />
 
@@ -179,6 +180,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/edittext_design_signup"
                         android:hint="City"
+                        android:focusableInTouchMode="false"
                         android:padding="15dp"
 
                         />

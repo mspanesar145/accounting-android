@@ -32,7 +32,7 @@ public class ApiManagerImpl implements ApiManager {
     public String findAllUserDocumentsApi = "/find/allUserDocuments";
     public String findTopTenDocumentsApi = "/find/topTenDocuments";
     public String saveCoverImage = "/save/coverimage";
-    public String saveMyAccountApi = "/save/myAccount";
+    public String saveMyAccountApi = "/api/users/update";
     public String findBlogsApi = "/find/allContentUserDocumentsForNullPdfAndCategoryIdSubCategoryId";
     public String findDocumentsById = "/find/allDocumentsByCategotyIdSubCategoryIdContainsVideo";
     public String findMyAccountByCreatedById = "/find/myAccountByCreatedById";
@@ -42,6 +42,7 @@ public class ApiManagerImpl implements ApiManager {
     public String findSubCategories="/find/subCategories";
     public String findByBannersForLogin = "/find/bannersByScreen";
     public String findCommentsById = "/find/documentsCommentsByDocumentId";
+    public String updateContentViewCount = "/save/documentStats";
 
 
 
@@ -129,6 +130,20 @@ public class ApiManagerImpl implements ApiManager {
     }
 
     @Override
+    public JSONObject updateDocumentViewCount(JSONObject jsonObject) {
+        try {
+            JsonParsing jsonParsing = new JsonParsing();
+            return jsonParsing.httpGetJSONObject(servarUrl+updateContentViewCount
+                            +"?userDocumentId="+jsonObject.optString("userDocumentId")
+                            +"&source="+jsonObject.optString("source")
+                    , null);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
     public JSONObject signUpApi(User user){
         JSONObject postData = new JSONObject();
         try {
@@ -137,6 +152,9 @@ public class ApiManagerImpl implements ApiManager {
             postData.put(user.PASSWORD,user.getPassword());
             postData.put(user.FIRSTNAME,user.getFirstName());
             postData.put(user.LASTNAME,user.getLastName());
+            postData.put(user.CITY,user.getCity());
+            postData.put(user.PHONE,user.getPhone());
+
 
             if (ConnectionResult.SUCCESS == GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(logoApplication.getApplicationContext())){
                 String refreshedToken = FirebaseInstanceId.getInstance().getToken();

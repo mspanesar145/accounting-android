@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.logo.R;
 import com.logo.application.LogoApplication;
+import com.logo.database.manager.UserManager;
 
 public class LogoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     DrawerLayout drawer;
@@ -119,7 +120,10 @@ public class LogoActivity extends AppCompatActivity implements NavigationView.On
             startActivity(new Intent(this, HomeActivity.class));
             finish();
         } else if (id == R.id.nav_list) {
-            startActivity(new Intent(this, ContentActivity.class));
+            UserManager userManager = getLogoApplication().getCoreManager().getUserManager();
+            Intent intent = new Intent(this, ContentActivity.class);
+            intent.putExtra("createdById", userManager.getUser().getUserId());
+            startActivity(intent);
             finish();
         } else if (id == R.id.nav_upload) {
             startActivity(new Intent(this, ProfileActivity.class));

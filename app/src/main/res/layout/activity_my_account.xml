@@ -46,17 +46,17 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content">
 
                     <RelativeLayout
                         android:id="@+id/rl_banner_image"
                         android:layout_width="match_parent"
-                        android:layout_height="150dp"
+                        android:layout_height="70dp"
                         android:background="@drawable/header_bg">
 
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="150dp"
+                            android:layout_height="70dp"
                             android:background="@android:color/transparent"
                             android:gravity="center">
                             <!--<ImageView
@@ -74,16 +74,16 @@
                                 android:textColor="@android:color/white"
                                 android:textSize="12pt" />
 
-                            <TextView
-                                android:id="@+id/tv_email"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/tv_usernmae"
-                                android:layout_marginTop="5dp"
-                                android:gravity="center"
-                                android:text="Create your account for free"
-                                android:textColor="#605f5f"
-                                android:textSize="8pt" />
+                            <!--<TextView-->
+                                <!--android:id="@+id/tv_email"-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="wrap_content"-->
+                                <!--android:layout_below="@+id/tv_usernmae"-->
+                                <!--android:layout_marginTop="5dp"-->
+                                <!--android:gravity="center"-->
+                                <!--android:text="Create your account for free"-->
+                                <!--android:textColor="#605f5f"-->
+                                <!--android:textSize="8pt" />-->
                         </RelativeLayout>
                     </RelativeLayout>
 
@@ -92,8 +92,52 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/rl_banner_image"
-                        android:layout_marginLeft="30dp"
                         android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <EditText
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/edittext_design_signup"
+                                android:inputType="none"
+                                android:focusableInTouchMode="false"
+                                android:hint="+91"
+                                android:padding="15dp" />
+
+                            <EditText
+                                android:id="@+id/et_mobile"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@drawable/edittext_design_signup"
+                                android:hint="Mobile Number"
+                                android:inputType="number"
+                                android:padding="15dp" />
+                        </LinearLayout>
+
+                        <EditText
+                            android:id="@+id/et_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/edittext_design_signup"
+                            android:hint="Email Address"
+                            android:inputType="textEmailAddress"
+                            android:padding="15dp"
+
+                            />
+
+                        <EditText
+                            android:id="@+id/et_city"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/edittext_design_signup"
+                            android:hint="City"
+                            android:focusableInTouchMode="false"
+                            android:padding="15dp" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -148,24 +192,21 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
                         android:layout_below="@+id/rl_profile_form">
 
                         <LinearLayout
                             android:id="@+id/ll_switch_buttons"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="30dp"
                             android:orientation="vertical">
 
                             <View
                                 android:layout_width="match_parent"
-                                android:layout_height="50dp" />
+                                android:layout_height="20dp" />
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
                                 android:layout_weight="2"
                                 android:background="@drawable/border_bottom"
                                 android:orientation="horizontal"

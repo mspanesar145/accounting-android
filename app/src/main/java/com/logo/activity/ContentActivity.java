@@ -40,6 +40,7 @@ import com.logo.util.AppUtil;
 import com.logo.views.RoundedImageView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -384,6 +385,7 @@ public class ContentActivity extends LogoActivity {
                 holder.ratingBar = (RatingBar) convertView.findViewById(R.id.rb_rating);
                 holder.btnComment = (Button) convertView.findViewById(R.id.bt_comment);
                 holder.btnViewComments = (Button) convertView.findViewById(R.id.bt_view_comment);
+                holder.tvViews = (TextView) convertView.findViewById(R.id.tv_views);
 
                 convertView.setTag(holder);
             } else {
@@ -402,10 +404,25 @@ public class ContentActivity extends LogoActivity {
                 text += "...";
                 holder.tvContentDesc.setText(Html.fromHtml(text+"<font color='#76daff'> <u>Read More</u></font>"));
                 Glide.with(context).load(jsonObject.getString("coverImageUrl")).into(holder.ivContentImage);
+                if (null != jsonObject.optJSONObject("documentStats")) {
+                    int count = 0;
+                    count = count + jsonObject.optJSONObject("documentStats").optInt("contentCounts");
+                    count = count + jsonObject.optJSONObject("documentStats").optInt("attachmentCounts");
+                    holder.tvViews.setText("Views : " + count);
+                } else {
+                    holder.tvViews.setText("Views : " + 0);
+                }
 
                 holder.tvContentDesc.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        try {
+                            jsonObject.put("source", "content");
+                            new ContentViewProcess().execute(jsonObject);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
                                 FullScreenDialog dialog = new FullScreenDialog(jsonObject);
                                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -442,6 +459,13 @@ public class ContentActivity extends LogoActivity {
                 holder.ivContentAttachment.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        try {
+                            jsonObject.put("source", "attachment");
+                            new ContentViewProcess().execute(jsonObject);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                         if (jsonObject.optBoolean("containsVideo") && !TextUtils.isEmpty(jsonObject.optString("videoLink"))) {
                             try {
                                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(jsonObject.getString("videoLink")));
@@ -494,7 +518,7 @@ public class ContentActivity extends LogoActivity {
 
         class ContentSectionHolder {
             ImageView ivContentImage,tvContentShare, ivContentAttachment;
-            TextView tvContentTitle,tvContentDesc;
+            TextView tvContentTitle,tvContentDesc, tvViews;
             Button btRate, btnComment, btnViewComments;
             RatingBar ratingBar;
 
@@ -794,6 +818,46 @@ public class ContentActivity extends LogoActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    class ContentViewProcess extends AsyncTask<JSONObject, JSONObject, JSONObject> {
+
+        ProgressDialog progressDialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+//            progressDialog = ProgressDialog.show(context, "", "Loading. Please wait...", true);
+        }
+
+        @Override
+        protected JSONObject doInBackground(JSONObject... objects) {
+            JSONObject viewObject = new JSONObject();
+            try {
+                viewObject.put("userDocumentId",String.valueOf(objects[0].optLong("userDocumentId")));
+                viewObject.put("source",objects[0].optString("source"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return apiManager.updateDocumentViewCount(viewObject);
+        }
+
+        @Override
+        protected void onPostExecute(final JSONObject jsonObject) {
+            super.onPostExecute(jsonObject);
+//            if (progressDialog != null) {
+//                progressDialog.dismiss();
+//                progressDialog = null;
+//            }
+//
+//            try {
+//                if (jsonObject != null) {
+//
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
         }
     }
 }

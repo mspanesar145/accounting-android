@@ -1,5 +1,9 @@
 package com.logo.bo;
 
+import com.google.gson.annotations.Expose;
+
+import org.json.JSONArray;
+
 public class User {
 
     public final String AUTHTYPE = "authType";
@@ -17,22 +21,36 @@ public class User {
     public final String LASTNAME = "lastName";
     public final String DEVICE_TOKEN = "deviceToken";
     public final String DEVICE_TYPE = "deviceType";
+    public final String PHONE = "phone";
+    public final String CITY = "city";
+    public final String MYACCOUNTS = "myAccounts";
 
-
-
+    @Expose
     private String name;
+    @Expose
     private  String email;
+    @Expose
     private String password;
+    @Expose
     private String apiUrl;
+    @Expose
     public String authToken;
+    @Expose
     private int userId;
+    @Expose
     private String username;
+    @Expose
     private String facebookID;
+    @Expose
     private String picture;
-
-
-
+    @Expose
+    private String city;
+    @Expose
+    private String phone;
+    private Object myAccounts;
+    @Expose
     private String authType;
+    @Expose
     private String gender;
 
     public String getFirstName() {
@@ -151,5 +169,29 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public Object getMyAccounts() {
+        return myAccounts;
+    }
+
+    public void setMyAccounts(Object myAccounts) {
+        this.myAccounts = myAccounts;
     }
 }
