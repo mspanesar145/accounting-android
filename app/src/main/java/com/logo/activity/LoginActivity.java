@@ -45,6 +45,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
+import com.google.gson.Gson;
 import com.logo.R;
 import com.logo.adapters.LoginSliderAdapter;
 import com.logo.application.LogoApplication;
@@ -564,6 +565,8 @@ public class LoginActivity extends LogoActivity {
                             }
                             if (jsonObject.has("myAccounts")) {
                                 user.setMyAccounts(jsonObject.getJSONArray("myAccounts"));
+                                String gsonString = new Gson().toJson(user.getMyAccounts());
+                                user.setMyAccountJsonString(gsonString);
                             }
 
                             userManager.addUser(user);

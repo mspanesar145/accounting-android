@@ -45,10 +45,20 @@
                 android:layout_above="@id/rl_footer"
                 android:layout_below="@+id/rl_header">
 
+                <EditText android:id="@+id/et_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:hint="Search"/>
+
                 <ListView
                     android:id="@+id/lv_content_list_items"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"></ListView>
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/et_search"/>
 
                 <TextView
                     android:id="@+id/tv_no_content"

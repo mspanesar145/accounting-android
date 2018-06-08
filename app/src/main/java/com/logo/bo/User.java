@@ -48,6 +48,7 @@ public class User {
     @Expose
     private String phone;
     private Object myAccounts;
+    private String myAccountJsonString;
     @Expose
     private String authType;
     @Expose
@@ -193,5 +194,13 @@ public class User {
 
     public void setMyAccounts(Object myAccounts) {
         this.myAccounts = myAccounts;
+    }
+
+    public String getMyAccountJsonString() {
+        return myAccountJsonString;
+    }
+
+    public void setMyAccountJsonString(String myAccountJsonString) {
+        this.myAccountJsonString = myAccountJsonString;
     }
 }

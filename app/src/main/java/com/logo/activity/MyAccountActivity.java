@@ -583,6 +583,8 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
                     editor.commit();
 
                     User user = new Gson().fromJson(jsonObject.optJSONObject("data").toString(), User.class);
+                    String gsonString = new Gson().toJson(user.getMyAccountJsonString());
+                    user.setMyAccountJsonString(gsonString);
 
                     userManager.deleteUser();
                     userManager.addUser(user);

@@ -6,13 +6,16 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -67,6 +70,7 @@ public class HomeActivity extends LogoActivity {
     TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae;
     RoundedImageView riv_imageView;
     TextView tvViewAllVideo, tvViewAllImage;
+    EditText etSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +116,7 @@ public class HomeActivity extends LogoActivity {
         scrollHome = (ScrollView) findViewById(R.id.scroll_home);
         tvViewAllVideo = (TextView) findViewById(R.id.view_all_video);
         tvViewAllImage = (TextView) findViewById(R.id.view_all_image);
+        etSearch = (EditText) findViewById(R.id.et_search);
 
         llBottomProfile.setOnClickListener(bottomProfileListener);
         llBottomMyAccount.setOnClickListener(bottomMySettingListener);
@@ -168,6 +173,28 @@ public class HomeActivity extends LogoActivity {
         Glide.with(context).load(user.getPicture()).into(riv_imageView);
         // Get user data
         new UserDocumentsProcess().execute(user.getUserId());
+
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!TextUtils.isEmpty(etSearch.getText().toString().trim())) {
+                    new SearchDocumentsProcess().execute(userManager.getUser().getUserId()
+                            , etSearch.getText().toString().trim());
+                } else {
+                    new SearchDocumentsProcess().execute(userManager.getUser().getUserId());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     View.OnClickListener bottomProfileListener = new View.OnClickListener() {
@@ -348,7 +375,7 @@ public class HomeActivity extends LogoActivity {
         }
     }
 
-    class UserDocumentsProcess extends AsyncTask<Integer, JSONObject, JSONObject> {
+    class UserDocumentsProcess extends AsyncTask<Object, JSONObject, JSONObject> {
         ProgressDialog progressDialog;
 
         @Override
@@ -361,8 +388,12 @@ public class HomeActivity extends LogoActivity {
         }
 
         @Override
-        protected JSONObject doInBackground(Integer... objects) {
-            return apiManager.findTopTenDocuments(objects[0]);
+        protected JSONObject doInBackground(Object... objects) {
+            if (objects.length == 2) {
+                return apiManager.findTopTenDocuments((Integer) objects[0], String.valueOf(objects[1]));
+            } else {
+                return apiManager.findTopTenDocuments((Integer) objects[0], null);
+            }
         }
 
         @Override
@@ -390,8 +421,48 @@ public class HomeActivity extends LogoActivity {
         }
     }
 
+    class SearchDocumentsProcess extends AsyncTask<Object, JSONObject, JSONObject> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected JSONObject doInBackground(Object... objects) {
+            if (objects.length == 2) {
+                return apiManager.findTopTenDocuments((Integer) objects[0], String.valueOf(objects[1]));
+            } else {
+                return apiManager.findTopTenDocuments((Integer) objects[0], null);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            super.onPostExecute(jsonObject);
+
+            try {
+                if (jsonObject != null) {
+//                    System.out.print(jsonArray);
+                    populateImageScrollSection(jsonObject.optJSONArray("image"));
+                    populateVideoScrollSection(jsonObject.optJSONArray("video"));
+                    populateContentScrollSection(jsonObject.optJSONArray("content"));
+                }
+//                else {
+//                    alertManager.alert("Something wrong", "Server error", context, null);
+//                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
     public void populateVideoScrollSection(final JSONArray jsonArray) {
         boolean videoLinksPresent = false;
+        llVideoSection.removeAllViews();
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
                 final JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -484,6 +555,7 @@ public class HomeActivity extends LogoActivity {
 
     public void populateImageScrollSection(final JSONArray jsonArray) {
         boolean videoLinksPresent = true;
+        linearLayout.removeAllViews();
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
                 final JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -586,9 +658,6 @@ public class HomeActivity extends LogoActivity {
                             JSONObject object = jsonArray.optJSONObject(0);
                             if (object != null) {
                                 Intent intent = new Intent(HomeActivity.this, ContentActivity.class);
-                                intent.putExtra(AppUtil.CATEGORY_ID, object.optInt(AppUtil.CATEGORY_ID));
-                                intent.putExtra(AppUtil.SUB_CATEGORY_ID, object.optInt(AppUtil.SUB_CATEGORY_ID));
-                                intent.putExtra(AppUtil.CONTAINS_VIDEO, object.optBoolean(AppUtil.CONTAINS_VIDEO));
                                 startActivity(intent);
                                 finish();
                             }
@@ -602,6 +671,8 @@ public class HomeActivity extends LogoActivity {
 
     public void populateContentScrollSection(final JSONArray jsonArray) {
         JSONArray contentSectionArray = new JSONArray();
+        videoSectionAdapter = null;
+        lvVideosVertical.requestLayout();
 
         boolean conetDescriptionExists = false;
         for (int i = 0; i < jsonArray.length(); i++) {

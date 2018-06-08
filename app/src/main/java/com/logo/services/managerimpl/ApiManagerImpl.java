@@ -1,5 +1,6 @@
 package com.logo.services.managerimpl;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -191,10 +192,14 @@ public class ApiManagerImpl implements ApiManager {
     }
 
     @Override
-    public JSONObject findTopTenDocuments(int userId) {
+    public JSONObject findTopTenDocuments(int userId, String title) {
         try {
             JsonParsing jsonParsing = new JsonParsing();
-            return jsonParsing.httpGetJSONObject(servarUrl+findTopTenDocumentsApi+"?"+"userId="+userId,null);
+            String query = servarUrl+findTopTenDocumentsApi+"?"+"userId="+userId;
+            if (!TextUtils.isEmpty(title)) {
+                query = query + "&title="+ title;
+            }
+            return jsonParsing.httpGetJSONObject(query,null);
         } catch (Exception e) {
             e.printStackTrace();
         }

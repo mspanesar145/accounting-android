@@ -9,8 +9,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.SearchView;
+import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +30,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.logo.R;
 import com.logo.application.LogoApplication;
 import com.logo.bo.User;
@@ -75,6 +80,9 @@ public class ContentActivity extends LogoActivity {
     String comment;
     Long selectedDocumentId;
     Integer selectedDocumentOverallRating;
+    EditText etSearch;
+    HashMap<String, Object> map;
+    private JSONArray mArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +110,7 @@ public class ContentActivity extends LogoActivity {
         llBottomMyAccount = (LinearLayout) findViewById(R.id.ll_my_settings);
         llBottomProfile = (LinearLayout) findViewById(R.id.ll_bottom_profile);
         llBottomHome = (LinearLayout) findViewById(R.id.ll_bottom_home);
+        etSearch = (EditText) findViewById(R.id.et_search);
 
         llBottomProfile.setOnClickListener(bottomProfileListener);
         llBottomMyAccount.setOnClickListener(bottomMySettingListener);
@@ -151,6 +160,31 @@ public class ContentActivity extends LogoActivity {
             }
         });
 
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (null != map) {
+                    if (map.containsKey("title")) {
+                        map.remove("title");
+                    }
+                    if (!TextUtils.isEmpty(etSearch.getText().toString().trim())) {
+                        map.put("title", etSearch.getText().toString().trim());
+                    }
+                    new SearchProcess().execute(map);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
 
 
         User user = userManager.getUser();
@@ -161,13 +195,14 @@ public class ContentActivity extends LogoActivity {
         Glide.with(context).load(user.getPicture()).into(riv_imageView);
 
         Intent receiverIntent = getIntent();
-        if (receiverIntent.hasExtra("createdById")) {
-            Long createdById = receiverIntent.getLongExtra("createdById", user.getUserId());
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("userId", createdById);
-            new ContentProcess().execute(map);
-        } else if (receiverIntent.hasExtra(AppUtil.CATEGORY_ID)) {
-            HashMap<String, Object> map =new HashMap<>();
+//        if (receiverIntent.hasExtra("createdById")) {
+//            Long createdById = receiverIntent.getLongExtra("createdById", user.getUserId());
+//            map = new HashMap<>();
+//            map.put("userId", createdById);
+//            new ContentProcess().execute(map);
+//        } else
+            if (receiverIntent.hasExtra(AppUtil.CATEGORY_ID)) {
+            map =new HashMap<>();
             map.put(AppUtil.CATEGORY_ID, receiverIntent.getIntExtra(AppUtil.CATEGORY_ID, 0));
             if (receiverIntent.hasExtra(AppUtil.SUB_CATEGORY_ID)) {
                 map.put(AppUtil.SUB_CATEGORY_ID, receiverIntent.getIntExtra(AppUtil.SUB_CATEGORY_ID, 0));
@@ -178,10 +213,7 @@ public class ContentActivity extends LogoActivity {
             }
             new ContentProcess().execute(map);
         } else  {
-            SharedPreferences pref = getApplicationContext().getSharedPreferences("myAccount", MODE_PRIVATE);
-//            if (pref.getBoolean("myAccountExists",false))  {
-                new FetchMyAccountProcess().execute();
-//            }
+            new FetchMyAccountProcess().execute();
         }
 
 
@@ -233,6 +265,9 @@ public class ContentActivity extends LogoActivity {
                 if (map.containsKey(AppUtil.CONTAINS_VIDEO)) {
                     queryStr = queryStr + "&" + AppUtil.CONTAINS_VIDEO + "=" + map.get(AppUtil.CONTAINS_VIDEO);
                 }
+                if (map.containsKey("title")) {
+                    queryStr = queryStr + "&title=" + map.get("title");
+                }
 
                 return apiManager.findDocumentById(queryStr);
             } else if (map.containsKey("userId")) {
@@ -252,7 +287,91 @@ public class ContentActivity extends LogoActivity {
 
             try {
                 if (jsonArray != null && jsonArray.length() > 0) {
-                    System.out.print(jsonArray);
+                    contentSectionAdapter = null;
+                    lvContentItems.requestLayout();
+
+                    contentSectionAdapter = new ContentSectionAdapter(ContentActivity.this,jsonArray);
+                    lvContentItems.setAdapter(contentSectionAdapter);
+
+                    // Set an item click listener for ListView
+                    lvContentItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            // Get the selected item text from ListView
+                            //String selectedItem = (LinearLayout) parent.getItemAtPosition(position);
+
+                            // Display the selected item text on TextView
+                            //-tv.setText("Your favorite : " + selectedItem);
+                            try {
+                                JSONObject jsonObject = jsonArray.getJSONObject(position);
+                                FullScreenDialog dialog = new FullScreenDialog(jsonObject);
+                                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                                dialog.show(ft, FullScreenDialog.TAG);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+                    });
+
+
+
+                } else {
+                    tvNoContent.setVisibility(View.VISIBLE);
+                    lvContentItems.setVisibility(View.GONE);
+                    //alertManager.alert("Something wrong", "Server error", context, null);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    class SearchProcess extends AsyncTask<HashMap<String, Object>, JSONArray, JSONArray> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected JSONArray doInBackground(HashMap<String, Object>... objects) {
+            HashMap<String, Object> map = objects[0];
+
+            String queryStr;
+            if (map.containsKey(AppUtil.CATEGORY_ID)){
+                queryStr = "?" + AppUtil.CATEGORY_ID + "="+ map.get(AppUtil.CATEGORY_ID);
+                if (map.containsKey(AppUtil.SUB_CATEGORY_ID)) {
+                    queryStr = queryStr + "&" + AppUtil.SUB_CATEGORY_ID + "="+ map.get(AppUtil.SUB_CATEGORY_ID);
+                }
+                if (map.containsKey(AppUtil.CONTAINS_VIDEO)) {
+                    queryStr = queryStr + "&" + AppUtil.CONTAINS_VIDEO + "=" + map.get(AppUtil.CONTAINS_VIDEO);
+                }
+                if (map.containsKey("title")) {
+                    queryStr = queryStr + "&title=" + map.get("title");
+                }
+
+                return apiManager.findDocumentById(queryStr);
+            } else if (map.containsKey("userId")) {
+                queryStr = "?userId="+map.get("userId");
+                return apiManager.findAllUserDocumentsByCategoryIdAndSubCategoryIdAndNullContentLink(queryStr);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(final JSONArray jsonArray) {
+            super.onPostExecute(jsonArray);
+            try {
+                if (jsonArray != null && jsonArray.length() > 0) {
+                    tvNoContent.setVisibility(View.GONE);
+                    lvContentItems.setVisibility(View.VISIBLE);
+                    contentSectionAdapter = null;
+                    lvContentItems.requestLayout();
+
                     contentSectionAdapter = new ContentSectionAdapter(ContentActivity.this,jsonArray);
                     lvContentItems.setAdapter(contentSectionAdapter);
 
@@ -323,7 +442,7 @@ public class ContentActivity extends LogoActivity {
                     editor.putBoolean("myAccountExists", true);           // Saving boolean - true/false
                     editor.commit(); // commit changes
 
-                    HashMap<String, Object> map =new HashMap<>();
+                    map =new HashMap<>();
                     map.put(AppUtil.CATEGORY_ID, jsonObject.opt("mainCourseId"));
                     map.put(AppUtil.SUB_CATEGORY_ID, jsonObject.opt("secondryCourseId"));
                     // Fetch content
