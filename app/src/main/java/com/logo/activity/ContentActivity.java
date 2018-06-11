@@ -70,7 +70,7 @@ public class ContentActivity extends LogoActivity {
 
     ListView lvContentItems;
     TextView tvNoContent;
-    TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae;
+    TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae, txtFeedback;
     RoundedImageView riv_imageView;
     LinearLayout llBottomProfile,llBottomMyAccount,llBottomHome;
     LinearLayout llContentSingleListItem;
@@ -111,6 +111,7 @@ public class ContentActivity extends LogoActivity {
         llBottomProfile = (LinearLayout) findViewById(R.id.ll_bottom_profile);
         llBottomHome = (LinearLayout) findViewById(R.id.ll_bottom_home);
         etSearch = (EditText) findViewById(R.id.et_search);
+        txtFeedback = (TextView) findViewById(R.id.feedback);
 
         llBottomProfile.setOnClickListener(bottomProfileListener);
         llBottomMyAccount.setOnClickListener(bottomMySettingListener);
@@ -147,6 +148,14 @@ public class ContentActivity extends LogoActivity {
             public void onClick(View v) {
                 startActivity(new Intent(ContentActivity.this,MyAccountActivity.class));
                 finish();
+            }
+        });
+
+        txtFeedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.closeDrawers();
+                startActivity(new Intent(ContentActivity.this,FeedbackActivity.class));
             }
         });
 

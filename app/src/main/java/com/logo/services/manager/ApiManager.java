@@ -28,5 +28,6 @@ public interface ApiManager {
     JSONArray findBannersForLogin(String screenName);
     JSONArray findCommentsById(String documentId);
     JSONObject updateDocumentViewCount(JSONObject object);
+    JSONObject sendFeedack(JSONObject jsonObject);
 
 }

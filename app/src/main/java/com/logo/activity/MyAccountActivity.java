@@ -75,7 +75,7 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
     Switch swSubScribe,swNotifications;
     Button btnSubmit;
     LinearLayout llBottomProfile,llBottomContent,llBottomHome;
-    TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae;
+    TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae, txtFeedback;
     RoundedImageView riv_imageView;
     TextView tvMainCategory, tvSubCategory;
     private List<Integer> selectedMainCourses, selectedSubCourses;
@@ -150,6 +150,7 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
         llBottomHome = (LinearLayout) findViewById(R.id.ll_bottom_home);
         tvMainCategory = (TextView) findViewById(R.id.tv_main_category);
         tvSubCategory = (TextView) findViewById(R.id.tv_sub_category);
+        txtFeedback = (TextView) findViewById(R.id.feedback);
 
         llBottomProfile.setOnClickListener(bottomProfileListener);
         llBottomContent.setOnClickListener(bottomContentListener);
@@ -196,6 +197,14 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
             public void onClick(View v) {
                 startActivity(new Intent(MyAccountActivity.this,MyAccountActivity.class));
                 finish();
+            }
+        });
+
+        txtFeedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.closeDrawers();
+                startActivity(new Intent(MyAccountActivity.this,FeedbackActivity.class));
             }
         });
 

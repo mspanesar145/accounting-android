@@ -86,7 +86,7 @@ public class ProfileActivity extends LogoActivity {
     Button btSubmit;
     ImageView ivUploadCi;
     TextView tvUploadContentFilename;
-    TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae;
+    TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae, txtFeedback;
     RoundedImageView riv_imageView;
 
     Boolean containsVideoLink = false;
@@ -135,6 +135,7 @@ public class ProfileActivity extends LogoActivity {
         rlUploadContentFileChooser = (RelativeLayout) findViewById(R.id.rl_upload_content_file_chooser);
         ivUploadCi = (ImageView) findViewById(R.id.iv_upload_ci);
         tvUploadContentFilename = (TextView) findViewById(R.id.tv_upload_content_filename);
+        txtFeedback = (TextView) findViewById(R.id.feedback);
 
         llBottomContent = (LinearLayout) findViewById(R.id.ll_bottom_content);
         llBottomMyAccount = (LinearLayout) findViewById(R.id.ll_my_settings);
@@ -175,6 +176,14 @@ public class ProfileActivity extends LogoActivity {
             public void onClick(View v) {
                 startActivity(new Intent(ProfileActivity.this,MyAccountActivity.class));
                 finish();
+            }
+        });
+
+        txtFeedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.closeDrawers();
+                startActivity(new Intent(ProfileActivity.this,FeedbackActivity.class));
             }
         });
 

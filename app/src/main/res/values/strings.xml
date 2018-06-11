@@ -18,6 +18,7 @@
     <string name="profile">PROFILE</string>
     <string name="widgets">WIDGETS</string>
     <string name="settings">SETTINGS</string>
+    <string name="feedback">Feedback</string>
     <string name="logout">LOG OUT</string>
     <string name="username">USER NAME</string>
 
@@ -47,6 +48,7 @@
     <string name="select">Select</string>
     <string name="select_main_cat">Select main course</string>
     <string name="select_sub_cat">Select secondary course</string>
+    <string name="enter_feedback">Enter your feedback</string>
 
 
     <string-array name="catogries">

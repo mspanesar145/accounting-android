@@ -44,6 +44,7 @@ public class ApiManagerImpl implements ApiManager {
     public String findByBannersForLogin = "/find/bannersByScreen";
     public String findCommentsById = "/find/documentsCommentsByDocumentId";
     public String updateContentViewCount = "/save/documentStats";
+    public String sendFeedback = "/api/users/sendFeedback";
 
 
 
@@ -138,6 +139,18 @@ public class ApiManagerImpl implements ApiManager {
                             +"?userDocumentId="+jsonObject.optString("userDocumentId")
                             +"&source="+jsonObject.optString("source")
                     , null);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public JSONObject sendFeedack(JSONObject jsonObject) {
+        try {
+            JsonParsing jsonParsing = new JsonParsing();
+            return jsonParsing.httpPost(servarUrl+sendFeedback
+                    , jsonObject, null);
         }catch (Exception e) {
             e.printStackTrace();
         }

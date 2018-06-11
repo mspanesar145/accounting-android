@@ -69,7 +69,7 @@ public class HomeActivity extends LogoActivity {
     ImageView ivHomeBanner;
     TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae;
     RoundedImageView riv_imageView;
-    TextView tvViewAllVideo, tvViewAllImage;
+    TextView tvViewAllVideo, tvViewAllImage, txtFeedback;
     EditText etSearch;
 
     @Override
@@ -117,6 +117,7 @@ public class HomeActivity extends LogoActivity {
         tvViewAllVideo = (TextView) findViewById(R.id.view_all_video);
         tvViewAllImage = (TextView) findViewById(R.id.view_all_image);
         etSearch = (EditText) findViewById(R.id.et_search);
+        txtFeedback = (TextView) findViewById(R.id.feedback);
 
         llBottomProfile.setOnClickListener(bottomProfileListener);
         llBottomMyAccount.setOnClickListener(bottomMySettingListener);
@@ -153,6 +154,14 @@ public class HomeActivity extends LogoActivity {
             public void onClick(View v) {
                 startActivity(new Intent(HomeActivity.this,MyAccountActivity.class));
                 finish();
+            }
+        });
+
+        txtFeedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.closeDrawers();
+                startActivity(new Intent(HomeActivity.this,FeedbackActivity.class));
             }
         });
 
