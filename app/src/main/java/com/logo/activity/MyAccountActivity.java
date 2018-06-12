@@ -74,8 +74,8 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
     EditText etMobile,etEmail,etCity;
     Switch swSubScribe,swNotifications;
     Button btnSubmit;
-    LinearLayout llBottomProfile,llBottomContent,llBottomHome;
-    TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae, txtFeedback;
+    LinearLayout llBottomProfile,llBottomContent,llBottomHome, llBottomBookmark;
+    TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae, txtFeedback, txtBookmark;
     RoundedImageView riv_imageView;
     TextView tvMainCategory, tvSubCategory;
     private List<Integer> selectedMainCourses, selectedSubCourses;
@@ -151,6 +151,8 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
         tvMainCategory = (TextView) findViewById(R.id.tv_main_category);
         tvSubCategory = (TextView) findViewById(R.id.tv_sub_category);
         txtFeedback = (TextView) findViewById(R.id.feedback);
+        llBottomBookmark = (LinearLayout) findViewById(R.id.ll_bottom_bookmark);
+        txtBookmark = (TextView) findViewById(R.id.bookmark_txt);
 
         llBottomProfile.setOnClickListener(bottomProfileListener);
         llBottomContent.setOnClickListener(bottomContentListener);
@@ -162,6 +164,16 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
         btnSubmit.setOnClickListener(btnSubmitClickListener);
         swSubScribe.setOnCheckedChangeListener(swSubScribeListener);
         swNotifications.setOnCheckedChangeListener(swNotificationsListener);
+        llBottomBookmark.setOnClickListener(bottomBookmarkListener);
+
+        txtBookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.closeDrawers();
+                startActivity(new Intent(MyAccountActivity.this,BookmarkActivity.class));
+                finish();
+            }
+        });
 
         listTxt = (TextView) findViewById(R.id.list_txt);
         listTxt.setOnClickListener(new View.OnClickListener() {
@@ -449,6 +461,14 @@ public class MyAccountActivity extends LogoActivity implements MainCategoryListe
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    };
+
+    View.OnClickListener bottomBookmarkListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startActivity(new Intent(MyAccountActivity.this, BookmarkActivity.class));
+            finish();
         }
     };
 

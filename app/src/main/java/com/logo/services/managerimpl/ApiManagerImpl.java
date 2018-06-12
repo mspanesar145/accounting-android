@@ -45,6 +45,7 @@ public class ApiManagerImpl implements ApiManager {
     public String findCommentsById = "/find/documentsCommentsByDocumentId";
     public String updateContentViewCount = "/save/documentStats";
     public String sendFeedback = "/api/users/sendFeedback";
+    public String bookmarkDocument = "/save/updateBookmarkDocument";
 
 
 
@@ -150,6 +151,18 @@ public class ApiManagerImpl implements ApiManager {
         try {
             JsonParsing jsonParsing = new JsonParsing();
             return jsonParsing.httpPost(servarUrl+sendFeedback
+                    , jsonObject, null);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public JSONObject bookmarkDocument(JSONObject jsonObject) {
+        try {
+            JsonParsing jsonParsing = new JsonParsing();
+            return jsonParsing.httpPost(servarUrl+bookmarkDocument
                     , jsonObject, null);
         }catch (Exception e) {
             e.printStackTrace();

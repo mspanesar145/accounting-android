@@ -63,13 +63,13 @@ public class HomeActivity extends LogoActivity {
     ScrollView scrollHome;
     HorizontalScrollView horizontalScrollView;
     LinearLayout linearLayout, llVideoSection;
-    LinearLayout llBottomProfile, llBottomMyAccount, llBottomContent;
+    LinearLayout llBottomProfile, llBottomMyAccount, llBottomContent, llBottomBookmark;
     ImageSectionAdapter imageSectionAdapter;
     VideoSectionAdapter videoSectionAdapter;
     ImageView ivHomeBanner;
     TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae;
     RoundedImageView riv_imageView;
-    TextView tvViewAllVideo, tvViewAllImage, txtFeedback;
+    TextView tvViewAllVideo, tvViewAllImage, txtFeedback, txtBookmark;
     EditText etSearch;
 
     @Override
@@ -113,15 +113,18 @@ public class HomeActivity extends LogoActivity {
         llBottomMyAccount = (LinearLayout) findViewById(R.id.ll_my_settings);
         llBottomProfile = (LinearLayout) findViewById(R.id.ll_bottom_profile);
         llBottomContent = (LinearLayout) findViewById(R.id.ll_bottom_content);
+        llBottomBookmark = (LinearLayout) findViewById(R.id.ll_bottom_bookmark);
         scrollHome = (ScrollView) findViewById(R.id.scroll_home);
         tvViewAllVideo = (TextView) findViewById(R.id.view_all_video);
         tvViewAllImage = (TextView) findViewById(R.id.view_all_image);
         etSearch = (EditText) findViewById(R.id.et_search);
         txtFeedback = (TextView) findViewById(R.id.feedback);
+        txtBookmark = (TextView) findViewById(R.id.bookmark_txt);
 
         llBottomProfile.setOnClickListener(bottomProfileListener);
         llBottomMyAccount.setOnClickListener(bottomMySettingListener);
         llBottomContent.setOnClickListener(bottomContentListener);
+        llBottomBookmark.setOnClickListener(bottomBookmarkListener);
 
         listTxt = (TextView) findViewById(R.id.list_txt);
         listTxt.setOnClickListener(new View.OnClickListener() {
@@ -162,6 +165,14 @@ public class HomeActivity extends LogoActivity {
             public void onClick(View v) {
                 drawer.closeDrawers();
                 startActivity(new Intent(HomeActivity.this,FeedbackActivity.class));
+            }
+        });
+        txtBookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.closeDrawers();
+                startActivity(new Intent(HomeActivity.this,BookmarkActivity.class));
+                finish();
             }
         });
 
@@ -218,6 +229,14 @@ public class HomeActivity extends LogoActivity {
         @Override
         public void onClick(View v) {
             startActivity(new Intent(HomeActivity.this, MyAccountActivity.class));
+            finish();
+        }
+    };
+
+    View.OnClickListener bottomBookmarkListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startActivity(new Intent(HomeActivity.this, BookmarkActivity.class));
             finish();
         }
     };

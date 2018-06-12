@@ -82,11 +82,11 @@ public class ProfileActivity extends LogoActivity {
     RadioGroup rgContainsVideo;
     EditText etTitle, etVideoLink, etDescription;
     RelativeLayout rlUploadCoverImage, rlUploadContentFileChooser;
-    LinearLayout llBottomMyAccount, llBottomContent, llBottomHome;
+    LinearLayout llBottomMyAccount, llBottomContent, llBottomHome, llBottomBookmark;
     Button btSubmit;
     ImageView ivUploadCi;
     TextView tvUploadContentFilename;
-    TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae, txtFeedback;
+    TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae, txtFeedback, txtBookmark;
     RoundedImageView riv_imageView;
 
     Boolean containsVideoLink = false;
@@ -136,6 +136,8 @@ public class ProfileActivity extends LogoActivity {
         ivUploadCi = (ImageView) findViewById(R.id.iv_upload_ci);
         tvUploadContentFilename = (TextView) findViewById(R.id.tv_upload_content_filename);
         txtFeedback = (TextView) findViewById(R.id.feedback);
+        llBottomBookmark = (LinearLayout) findViewById(R.id.ll_bottom_bookmark);
+        txtBookmark = (TextView) findViewById(R.id.bookmark_txt);
 
         llBottomContent = (LinearLayout) findViewById(R.id.ll_bottom_content);
         llBottomMyAccount = (LinearLayout) findViewById(R.id.ll_my_settings);
@@ -144,6 +146,16 @@ public class ProfileActivity extends LogoActivity {
         llBottomMyAccount.setOnClickListener(bottomMySettingListener);
         llBottomContent.setOnClickListener(bottomContentListener);
         llBottomHome.setOnClickListener(bottomHomeListener);
+        llBottomBookmark.setOnClickListener(bottomBookmarkListener);
+
+        txtBookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.closeDrawers();
+                startActivity(new Intent(ProfileActivity.this,BookmarkActivity.class));
+                finish();
+            }
+        });
 
         listTxt = (TextView) findViewById(R.id.list_txt);
         listTxt.setOnClickListener(new View.OnClickListener() {
@@ -391,6 +403,14 @@ public class ProfileActivity extends LogoActivity {
                 new UserDocumentProcess().execute(userDocumentObject);
             }
 
+        }
+    };
+
+    View.OnClickListener bottomBookmarkListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startActivity(new Intent(ProfileActivity.this, BookmarkActivity.class));
+            finish();
         }
     };
 

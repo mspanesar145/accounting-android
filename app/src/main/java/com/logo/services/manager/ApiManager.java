@@ -29,5 +29,6 @@ public interface ApiManager {
     JSONArray findCommentsById(String documentId);
     JSONObject updateDocumentViewCount(JSONObject object);
     JSONObject sendFeedack(JSONObject jsonObject);
+    JSONObject bookmarkDocument(JSONObject jsonObject);
 
 }

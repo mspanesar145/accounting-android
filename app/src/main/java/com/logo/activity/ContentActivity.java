@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,9 +71,9 @@ public class ContentActivity extends LogoActivity {
 
     ListView lvContentItems;
     TextView tvNoContent;
-    TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae, txtFeedback;
+    TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae, txtFeedback, txtBookmark;
     RoundedImageView riv_imageView;
-    LinearLayout llBottomProfile,llBottomMyAccount,llBottomHome;
+    LinearLayout llBottomProfile,llBottomMyAccount,llBottomHome, llBottomBookmark;
     LinearLayout llContentSingleListItem;
     ContentSectionAdapter contentSectionAdapter;
     JSONArray contentJSONArray;
@@ -112,10 +113,22 @@ public class ContentActivity extends LogoActivity {
         llBottomHome = (LinearLayout) findViewById(R.id.ll_bottom_home);
         etSearch = (EditText) findViewById(R.id.et_search);
         txtFeedback = (TextView) findViewById(R.id.feedback);
+        llBottomBookmark = (LinearLayout) findViewById(R.id.ll_bottom_bookmark);
+        txtBookmark = (TextView) findViewById(R.id.bookmark_txt);
 
         llBottomProfile.setOnClickListener(bottomProfileListener);
         llBottomMyAccount.setOnClickListener(bottomMySettingListener);
         llBottomHome.setOnClickListener(bottomHomeListener);
+        llBottomBookmark.setOnClickListener(bottomBookmarkListener);
+
+        txtBookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.closeDrawers();
+                startActivity(new Intent(ContentActivity.this,BookmarkActivity.class));
+                finish();
+            }
+        });
 
         listTxt = (TextView) findViewById(R.id.list_txt);
         listTxt.setOnClickListener(new View.OnClickListener() {
@@ -227,6 +240,14 @@ public class ContentActivity extends LogoActivity {
 
 
     }
+
+    View.OnClickListener bottomBookmarkListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startActivity(new Intent(ContentActivity.this, BookmarkActivity.class));
+            finish();
+        }
+    };
 
     View.OnClickListener bottomProfileListener = new View.OnClickListener() {
         @Override
@@ -421,6 +442,31 @@ public class ContentActivity extends LogoActivity {
         }
     }
 
+    class BookmarkProcess extends AsyncTask<JSONObject, JSONObject, JSONObject> {
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(context, "", "Loading. Please wait...", true);
+        }
+
+        @Override
+        protected JSONObject doInBackground(JSONObject... objects) {
+            return apiManager.bookmarkDocument(objects[0]);
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            super.onPostExecute(jsonObject);
+            if(progressDialog!=null) {
+                progressDialog.dismiss();
+                progressDialog = null;
+            }
+
+        }
+    }
+
     class FetchMyAccountProcess extends AsyncTask<JSONObject, JSONObject, JSONObject> {
         ProgressDialog progressDialog;
 
@@ -514,6 +560,7 @@ public class ContentActivity extends LogoActivity {
                 holder.btnComment = (Button) convertView.findViewById(R.id.bt_comment);
                 holder.btnViewComments = (Button) convertView.findViewById(R.id.bt_view_comment);
                 holder.tvViews = (TextView) convertView.findViewById(R.id.tv_views);
+                holder.rlBookmark = (RelativeLayout) convertView.findViewById(R.id.rl_bookmark);
 
                 convertView.setTag(holder);
             } else {
@@ -638,6 +685,21 @@ public class ContentActivity extends LogoActivity {
                     }
                 });
 
+                holder.rlBookmark.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            JSONObject bookmarkObject = new JSONObject();
+                            bookmarkObject.put("userDocumentId", jsonObject.optInt("userDocumentId"));
+                            bookmarkObject.put("bookmarkedById", userManager.getUser().getUserId());
+
+                            new BookmarkProcess().execute(bookmarkObject);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
             } catch (Exception e) {
 
             }
@@ -648,6 +710,7 @@ public class ContentActivity extends LogoActivity {
             ImageView ivContentImage,tvContentShare, ivContentAttachment;
             TextView tvContentTitle,tvContentDesc, tvViews;
             Button btRate, btnComment, btnViewComments;
+            RelativeLayout rlBookmark;
             RatingBar ratingBar;
 
 
