@@ -63,65 +63,53 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ProfileActivity.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/ProfileActivity.java">
+      <file leaf-file-name="HomeActivity.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/HomeActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="219">
-              <caret line="408" column="4" lean-forward="false" selection-start-line="408" selection-start-column="4" selection-end-line="414" selection-end-column="6" />
+            <state relative-caret-position="406">
+              <caret line="243" column="4" lean-forward="false" selection-start-line="243" selection-start-column="4" selection-end-line="252" selection-end-column="6" />
               <folding>
-                <element signature="e#16868#17075#0" expanded="true" />
-                <element signature="e#17074#17075#0" expanded="true" />
+                <element signature="e#8872#9076#0" expanded="true" />
+                <element signature="e#9075#9076#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="activity_profile.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_profile.xml">
+      <file leaf-file-name="ContentActivity.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/ContentActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="158">
+              <caret line="463" column="23" lean-forward="true" selection-start-line="463" selection-start-column="23" selection-end-line="463" selection-end-column="23" />
+              <folding>
+                <element signature="e#4265#4534#0" expanded="true" />
+                <element signature="e#4533#4534#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BookmarkActivity.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/BookmarkActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="294">
+              <caret line="111" column="78" lean-forward="false" selection-start-line="111" selection-start-column="78" selection-end-line="111" selection-end-column="78" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="activity_bookmark.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_bookmark.xml">
           <provider editor-type-id="android-designer2">
             <state />
           </provider>
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="137">
-              <caret line="346" column="69" lean-forward="false" selection-start-line="346" selection-start-column="51" selection-end-line="346" selection-end-column="69" />
+            <state relative-caret-position="248">
+              <caret line="129" column="58" lean-forward="false" selection-start-line="129" selection-start-column="41" selection-end-line="129" selection-end-column="58" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MyAccountActivity.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/MyAccountActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="352">
-              <caret line="462" column="13" lean-forward="true" selection-start-line="462" selection-start-column="13" selection-end-line="462" selection-end-column="13" />
-              <folding>
-                <element signature="e#18954#19163#0" expanded="true" />
-                <element signature="e#19162#19163#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="activity_my_account.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_my_account.xml">
-          <provider editor-type-id="android-designer2">
-            <state />
-          </provider>
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="113">
-              <caret line="306" column="69" lean-forward="false" selection-start-line="306" selection-start-column="69" selection-end-line="306" selection-end-column="69" />
-              <folding>
-                <marker date="1528767395000" expanded="false" signature="20644:20658" ph="&quot;HOME&quot;" />
-                <marker date="1528767395000" expanded="false" signature="20765:20787" ph="&quot;16sp&quot;" />
-                <marker date="1528767395000" expanded="false" signature="21385:21399" ph="&quot;LIST&quot;" />
-                <marker date="1528767395000" expanded="false" signature="21506:21528" ph="&quot;16sp&quot;" />
-                <marker date="1528767395000" expanded="false" signature="22134:22152" ph="&quot;BOOKMARKS&quot;" />
-                <marker date="1528767395000" expanded="false" signature="22259:22281" ph="&quot;16sp&quot;" />
-                <marker date="1528767395000" expanded="false" signature="25083:25100" ph="&quot;PROFILE&quot;" />
-                <marker date="1528767395000" expanded="false" signature="25207:25229" ph="&quot;16sp&quot;" />
-                <marker date="1528767395000" expanded="false" signature="26583:26601" ph="&quot;SETTINGS&quot;" />
-                <marker date="1528767395000" expanded="false" signature="26708:26730" ph="&quot;16sp&quot;" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -140,7 +128,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>categorySpinner</find>
       <find>categoryMap</find>
       <find>categoryAdapter</find>
       <find>subCategoryAdapter</find>
@@ -170,6 +157,7 @@
       <find>onA</find>
       <find>userManager</find>
       <find>ContentS</find>
+      <find>ContentSec</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -2190,15 +2178,15 @@
         <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_bookmark.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_home.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/logo/activity/BookmarkActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/drawable/circle_cyan.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/logo/activity/HomeActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_content.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_profile.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/logo/activity/ContentActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/logo/activity/ProfileActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_my_account.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/logo/activity/MyAccountActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/logo/activity/ContentActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/logo/activity/BookmarkActivity.java" />
       </list>
     </option>
   </component>
@@ -2432,7 +2420,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1528767584260" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1528767933459" />
       </method>
     </configuration>
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests">
@@ -2480,7 +2468,7 @@
       </Profilers>
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1528767584260" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1528767933459" />
       </method>
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -2663,7 +2651,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1528767584262" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1528767933460" />
       </method>
     </configuration>
     <list size="1">
@@ -2727,7 +2715,7 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Device File Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39915967" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.39915967" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32847896" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32913166" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -2765,7 +2753,7 @@
           <option name="timeStamp" value="304" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="338" />
+      <option name="time" value="339" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -3103,30 +3091,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_bookmark.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="81">
-          <caret line="105" column="33" lean-forward="false" selection-start-line="105" selection-start-column="33" selection-end-line="105" selection-end-column="33" />
-          <folding>
-            <element signature="e#10498#10512#0" expanded="true" />
-            <element signature="e#10619#10641#0" expanded="true" />
-            <element signature="e#11239#11253#0" expanded="true" />
-            <element signature="e#11360#11382#0" expanded="true" />
-            <element signature="e#11988#12006#0" expanded="true" />
-            <element signature="e#12113#12135#0" expanded="true" />
-            <element signature="e#14967#14984#0" expanded="true" />
-            <element signature="e#15091#15113#0" expanded="true" />
-            <element signature="e#16467#16485#0" expanded="true" />
-            <element signature="e#16592#16614#0" expanded="true" />
-            <element signature="e#17211#17229#0" expanded="true" />
-            <element signature="e#17387#17409#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/circle.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -3157,76 +3121,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/BookmarkActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="346">
-          <caret line="557" column="62" lean-forward="false" selection-start-line="557" selection-start-column="62" selection-end-line="557" selection-end-column="62" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#3998#4228#0" expanded="true" />
-            <element signature="e#4227#4228#0" expanded="true" />
-            <element signature="e#4325#4552#0" expanded="true" />
-            <element signature="e#4551#4552#0" expanded="true" />
-            <element signature="e#4647#4877#0" expanded="true" />
-            <element signature="e#4876#4877#0" expanded="true" />
-            <element signature="e#4975#5207#0" expanded="true" />
-            <element signature="e#5206#5207#0" expanded="true" />
-            <element signature="e#5250#5494#0" expanded="true" />
-            <element signature="e#5493#5494#0" expanded="true" />
-            <element signature="e#5587#5857#0" expanded="true" />
-            <element signature="e#5856#5857#0" expanded="true" />
-            <element signature="e#8176#8368#0" expanded="true" />
-            <element signature="e#8367#8368#0" expanded="true" />
-            <element signature="e#8422#8616#0" expanded="true" />
-            <element signature="e#8615#8616#0" expanded="true" />
-            <element signature="e#8665#8854#0" expanded="true" />
-            <element signature="e#8853#8854#0" expanded="true" />
-            <element signature="e#11123#12209#0" expanded="true" />
-            <element signature="e#12208#12209#0" expanded="true" />
-            <element signature="e#12726#12727#0" expanded="true" />
-            <element signature="e#12770#12771#0" expanded="true" />
-            <element signature="e#14695#15781#0" expanded="true" />
-            <element signature="e#15780#15781#0" expanded="true" />
-            <element signature="e#19102#19103#0" expanded="true" />
-            <element signature="e#19161#19162#0" expanded="true" />
-            <element signature="e#19489#19490#0" expanded="true" />
-            <element signature="e#19528#19529#0" expanded="true" />
-            <element signature="e#22396#23086#0" expanded="true" />
-            <element signature="e#23085#23086#0" expanded="true" />
-            <element signature="e#23229#23552#0" expanded="true" />
-            <element signature="e#23551#23552#0" expanded="true" />
-            <element signature="e#23609#23950#0" expanded="true" />
-            <element signature="e#23949#23950#0" expanded="true" />
-            <element signature="e#24012#24268#0" expanded="true" />
-            <element signature="e#24267#24268#0" expanded="true" />
-            <element signature="e#24334#26415#0" expanded="true" />
-            <element signature="e#26414#26415#0" expanded="true" />
-            <element signature="e#26476#27252#0" expanded="true" />
-            <element signature="e#27251#27252#0" expanded="true" />
-            <element signature="e#27309#27968#0" expanded="true" />
-            <element signature="e#27967#27968#0" expanded="true" />
-            <element signature="e#28501#28502#0" expanded="true" />
-            <element signature="e#28554#28555#0" expanded="true" />
-            <element signature="e#29873#30394#0" expanded="true" />
-            <element signature="e#30393#30394#0" expanded="true" />
-            <element signature="e#30439#30961#0" expanded="true" />
-            <element signature="e#30960#30961#0" expanded="true" />
-            <element signature="e#31006#31530#0" expanded="true" />
-            <element signature="e#31529#31530#0" expanded="true" />
-            <element signature="e#31575#32099#0" expanded="true" />
-            <element signature="e#32098#32099#0" expanded="true" />
-            <element signature="e#32144#32671#0" expanded="true" />
-            <element signature="e#32670#32671#0" expanded="true" />
-            <element signature="e#32797#33159#0" expanded="true" />
-            <element signature="e#33158#33159#0" expanded="true" />
-            <element signature="e#34654#34655#0" expanded="true" />
-            <element signature="e#34707#34708#0" expanded="true" />
-            <element signature="e#35749#36230#0" expanded="true" />
-            <element signature="e#36229#36230#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_home.xml">
       <provider editor-type-id="android-designer2">
         <state />
@@ -3249,45 +3143,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/HomeActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="235" column="4" lean-forward="false" selection-start-line="235" selection-start-column="4" selection-end-line="241" selection-end-column="6" />
-          <folding>
-            <element signature="e#8872#9076#0" expanded="true" />
-            <element signature="e#9075#9076#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/ContentActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="121" column="8" lean-forward="true" selection-start-line="121" selection-start-column="8" selection-end-line="130" selection-end-column="11" />
-          <folding>
-            <element signature="e#8760#8967#0" expanded="true" />
-            <element signature="e#8966#8967#0" expanded="true" />
-            <element signature="e#27955#28614#0" expanded="true" />
-            <element signature="e#28613#28614#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
           <caret line="22" column="44" lean-forward="true" selection-start-line="22" selection-start-column="44" selection-end-line="22" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_profile.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
-          <caret line="346" column="69" lean-forward="false" selection-start-line="346" selection-start-column="51" selection-end-line="346" selection-end-column="69" />
           <folding />
         </state>
       </provider>
@@ -3314,6 +3173,39 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/MyAccountActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="445" column="40" lean-forward="true" selection-start-line="445" selection-start-column="40" selection-end-line="445" selection-end-column="40" />
+          <folding>
+            <element signature="e#18954#19163#0" expanded="true" />
+            <element signature="e#19162#19163#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_profile.xml">
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="137">
+          <caret line="346" column="69" lean-forward="false" selection-start-line="346" selection-start-column="51" selection-end-line="346" selection-end-column="69" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/HomeActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="406">
+          <caret line="243" column="4" lean-forward="false" selection-start-line="243" selection-start-column="4" selection-end-line="252" selection-end-column="6" />
+          <folding>
+            <element signature="e#8872#9076#0" expanded="true" />
+            <element signature="e#9075#9076#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/ProfileActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="219">
@@ -3325,13 +3217,34 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/MyAccountActivity.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_bookmark.xml">
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="462" column="13" lean-forward="true" selection-start-line="462" selection-start-column="13" selection-end-line="462" selection-end-column="13" />
+        <state relative-caret-position="248">
+          <caret line="129" column="58" lean-forward="false" selection-start-line="129" selection-start-column="41" selection-end-line="129" selection-end-column="58" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/BookmarkActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="294">
+          <caret line="111" column="78" lean-forward="false" selection-start-line="111" selection-start-column="78" selection-end-line="111" selection-end-column="78" />
           <folding>
-            <element signature="e#18954#19163#0" expanded="true" />
-            <element signature="e#19162#19163#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/ContentActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="158">
+          <caret line="463" column="23" lean-forward="true" selection-start-line="463" selection-start-column="23" selection-end-line="463" selection-end-column="23" />
+          <folding>
+            <element signature="e#4265#4534#0" expanded="true" />
+            <element signature="e#4533#4534#0" expanded="true" />
           </folding>
         </state>
       </provider>

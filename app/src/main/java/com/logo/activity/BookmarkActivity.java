@@ -69,7 +69,7 @@ public class BookmarkActivity extends LogoActivity {
     TextView tvNoContent;
     TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae, txtFeedback;
     RoundedImageView riv_imageView;
-    LinearLayout llBottomProfile,llBottomMyAccount,llBottomHome;
+    LinearLayout llBottomProfile,llBottomMyAccount,llBottomHome, llBottomContent;
     LinearLayout llContentSingleListItem;
     ContentSectionAdapter contentSectionAdapter;
     JSONArray contentJSONArray;
@@ -109,10 +109,12 @@ public class BookmarkActivity extends LogoActivity {
         llBottomHome = (LinearLayout) findViewById(R.id.ll_bottom_home);
 //        etSearch = (EditText) findViewById(R.id.et_search);
         txtFeedback = (TextView) findViewById(R.id.feedback);
+        llBottomContent = (LinearLayout) findViewById(R.id.ll_bottom_content);
 
         llBottomProfile.setOnClickListener(bottomProfileListener);
         llBottomMyAccount.setOnClickListener(bottomMySettingListener);
         llBottomHome.setOnClickListener(bottomHomeListener);
+        llBottomContent.setOnClickListener(bottomContentListener);
 
         listTxt = (TextView) findViewById(R.id.list_txt);
         listTxt.setOnClickListener(new View.OnClickListener() {
@@ -245,6 +247,17 @@ public class BookmarkActivity extends LogoActivity {
         @Override
         public void onClick(View v) {
             startActivity(new Intent(context,HomeActivity.class));
+            finish();
+        }
+    };
+
+    View.OnClickListener bottomContentListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            UserManager userManager = getLogoApplication().getCoreManager().getUserManager();
+            Intent intent = new Intent(BookmarkActivity.this, ContentActivity.class);
+            intent.putExtra("createdById", userManager.getUser().getUserId());
+            startActivity(intent);
             finish();
         }
     };
