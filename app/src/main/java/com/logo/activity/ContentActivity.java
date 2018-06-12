@@ -463,7 +463,7 @@ public class ContentActivity extends LogoActivity {
                 progressDialog.dismiss();
                 progressDialog = null;
             }
-
+            new ContentProcess().execute(map);
         }
     }
 
@@ -685,6 +685,17 @@ public class ContentActivity extends LogoActivity {
                     }
                 });
 
+                if (null != jsonObject.optJSONObject("bookmarkDocuments")) {
+                    JSONObject bookmarkObject = jsonObject.optJSONObject("bookmarkDocuments");
+                    if (userManager.getUser().getUserId() == bookmarkObject.optInt("bookmarkedById", 0)) {
+                        holder.rlBookmark.setBackgroundResource(R.drawable.circle_cyan);
+                    } else {
+                        holder.rlBookmark.setBackgroundResource(R.drawable.circle);
+                    }
+                } else {
+                    holder.rlBookmark.setBackgroundResource(R.drawable.circle);
+                }
+
                 holder.rlBookmark.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -692,6 +703,12 @@ public class ContentActivity extends LogoActivity {
                             JSONObject bookmarkObject = new JSONObject();
                             bookmarkObject.put("userDocumentId", jsonObject.optInt("userDocumentId"));
                             bookmarkObject.put("bookmarkedById", userManager.getUser().getUserId());
+                            if (null != jsonObject.optJSONObject("bookmarkDocuments")) {
+                                JSONObject markedObject = jsonObject.optJSONObject("bookmarkDocuments");
+                                if (userManager.getUser().getUserId() == markedObject.optInt("bookmarkedById", 0)) {
+                                    bookmarkObject.put("bookmarkDocumentId", markedObject.optInt("bookmarkDocumentId", 0));
+                                }
+                            }
 
                             new BookmarkProcess().execute(bookmarkObject);
                         } catch (JSONException e) {

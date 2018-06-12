@@ -309,7 +309,20 @@ public class BookmarkActivity extends LogoActivity {
                     contentSectionAdapter = null;
                     lvContentItems.requestLayout();
 
-                    contentSectionAdapter = new ContentSectionAdapter(BookmarkActivity.this,jsonArray);
+                    JSONArray bookmarkArray = new JSONArray();
+                    for (int i = 0;i < jsonArray.length(); i++) {
+                        if (null != jsonArray.optJSONObject(i).optJSONObject("bookmarkDocuments")) {
+                            JSONObject bookmarkObject = jsonArray.optJSONObject(i).optJSONObject("bookmarkDocuments");
+                            if (userManager.getUser().getUserId() == bookmarkObject.optInt("bookmarkedById", 0)) {
+                                bookmarkArray.put(jsonArray.opt(i));
+                            }
+                        }
+                    }
+
+                    contentSectionAdapter = null;
+                    lvContentItems.requestLayout();
+
+                    contentSectionAdapter = new ContentSectionAdapter(BookmarkActivity.this,bookmarkArray);
                     lvContentItems.setAdapter(contentSectionAdapter);
 
                     // Set an item click listener for ListView
@@ -452,7 +465,7 @@ public class BookmarkActivity extends LogoActivity {
                 progressDialog.dismiss();
                 progressDialog = null;
             }
-
+            new ContentProcess().execute(map);
         }
     }
 
@@ -682,6 +695,13 @@ public class BookmarkActivity extends LogoActivity {
                             JSONObject bookmarkObject = new JSONObject();
                             bookmarkObject.put("userDocumentId", jsonObject.optInt("userDocumentId"));
                             bookmarkObject.put("bookmarkedById", userManager.getUser().getUserId());
+
+                            if (null != jsonObject.optJSONObject("bookmarkDocuments")) {
+                                JSONObject markedObject = jsonObject.optJSONObject("bookmarkDocuments");
+                                if (userManager.getUser().getUserId() == markedObject.optInt("bookmarkedById", 0)) {
+                                    bookmarkObject.put("bookmarkDocumentId", markedObject.optInt("bookmarkDocumentId", 0));
+                                }
+                            }
 
                             new BookmarkProcess().execute(bookmarkObject);
                         } catch (JSONException e) {
