@@ -84,6 +84,7 @@ public class ContentActivity extends LogoActivity {
     EditText etSearch;
     HashMap<String, Object> map;
     private JSONArray mArray;
+    ImageView ivSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +121,19 @@ public class ContentActivity extends LogoActivity {
         llBottomMyAccount.setOnClickListener(bottomMySettingListener);
         llBottomHome.setOnClickListener(bottomHomeListener);
         llBottomBookmark.setOnClickListener(bottomBookmarkListener);
+
+        ivSearch = (ImageView) findViewById(R.id.iv_search);
+
+        ivSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (etSearch.getVisibility() == View.VISIBLE){
+                    etSearch.setVisibility(View.GONE);
+                } else {
+                    etSearch.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         txtBookmark.setOnClickListener(new View.OnClickListener() {
             @Override

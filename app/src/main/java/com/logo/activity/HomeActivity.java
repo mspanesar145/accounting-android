@@ -66,7 +66,7 @@ public class HomeActivity extends LogoActivity {
     LinearLayout llBottomProfile, llBottomMyAccount, llBottomContent, llBottomBookmark;
     ImageSectionAdapter imageSectionAdapter;
     VideoSectionAdapter videoSectionAdapter;
-    ImageView ivHomeBanner;
+    ImageView ivHomeBanner, ivSearch;
     TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae;
     RoundedImageView riv_imageView;
     TextView tvViewAllVideo, tvViewAllImage, txtFeedback, txtBookmark;
@@ -127,6 +127,19 @@ public class HomeActivity extends LogoActivity {
         llBottomBookmark.setOnClickListener(bottomBookmarkListener);
 
         listTxt = (TextView) findViewById(R.id.list_txt);
+        ivSearch = (ImageView) findViewById(R.id.iv_search);
+
+        ivSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (etSearch.getVisibility() == View.VISIBLE){
+                    etSearch.setVisibility(View.GONE);
+                } else {
+                    etSearch.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
         listTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
