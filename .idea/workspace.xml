@@ -117,11 +117,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ContentActivity.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="adapter_content_screen_items.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/adapter_content_screen_items.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="340">
+              <caret line="20" column="41" lean-forward="false" selection-start-line="20" selection-start-column="41" selection-end-line="20" selection-end-column="41" />
+              <folding />
+            </state>
+          </provider>
+          <provider editor-type-id="android-designer2">
+            <state />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ContentActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/ContentActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="429">
-              <caret line="85" column="29" lean-forward="true" selection-start-line="85" selection-start-column="29" selection-end-line="85" selection-end-column="29" />
+            <state relative-caret-position="348">
+              <caret line="590" column="44" lean-forward="false" selection-start-line="590" selection-start-column="44" selection-end-line="590" selection-end-column="44" />
               <folding>
                 <element signature="e#4348#4683#0" expanded="true" />
                 <element signature="e#4682#4683#0" expanded="true" />
@@ -130,11 +143,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BookmarkActivity.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="BookmarkActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/BookmarkActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6919">
-              <caret line="457" column="40" lean-forward="false" selection-start-line="457" selection-start-column="40" selection-end-line="457" selection-end-column="40" />
+            <state relative-caret-position="325">
+              <caret line="584" column="55" lean-forward="true" selection-start-line="584" selection-start-column="55" selection-end-line="584" selection-end-column="55" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -2214,7 +2227,6 @@
         <option value="$PROJECT_DIR$/app/src/main/res/drawable/ic_information.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/logo/services/manager/ApiManager.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/logo/services/managerimpl/ApiManagerImpl.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/adapter_content_screen_items.xml" />
         <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_bookmark.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/drawable/circle_cyan.xml" />
@@ -2222,12 +2234,13 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/logo/activity/ProfileActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_my_account.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/logo/activity/MyAccountActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/logo/activity/BookmarkActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/drawable/ic_search_white.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_home.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/logo/activity/HomeActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_content.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/adapter_content_screen_items.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/logo/activity/ContentActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/logo/activity/BookmarkActivity.java" />
       </list>
     </option>
   </component>
@@ -2438,7 +2451,7 @@
       <option name="DEEP_LINK" value="" />
       <option name="ACTIVITY_CLASS" value="" />
       <method>
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1529337647272" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1529943277434" />
       </method>
     </configuration>
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests">
@@ -2485,7 +2498,7 @@
         <option name="ADVANCED_PROFILING_ENABLED" value="false" />
       </Profilers>
       <method>
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1529337647272" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1529943277434" />
       </method>
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -2646,7 +2659,7 @@
       <option name="DEEP_LINK" value="" />
       <option name="ACTIVITY_CLASS" value="" />
       <method>
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1529337647274" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1529943277435" />
       </method>
     </configuration>
     <list size="1">
@@ -3026,16 +3039,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/adapter_content_screen_items.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="302">
-          <caret line="178" column="60" lean-forward="false" selection-start-line="178" selection-start-column="60" selection-end-line="178" selection-end-column="60" />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/circle_cyan.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
@@ -3134,16 +3137,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/BookmarkActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6919">
-          <caret line="457" column="40" lean-forward="false" selection-start-line="457" selection-start-column="40" selection-end-line="457" selection-end-column="40" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/services/managerimpl/ApiManagerImpl.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
@@ -3185,17 +3178,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_content.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="65" column="44" lean-forward="false" selection-start-line="65" selection-start-column="44" selection-end-line="65" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/HomeActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="219">
@@ -3207,13 +3189,45 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_content.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="65" column="44" lean-forward="false" selection-start-line="65" selection-start-column="44" selection-end-line="65" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/adapter_content_screen_items.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="20" column="41" lean-forward="false" selection-start-line="20" selection-start-column="41" selection-end-line="20" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/ContentActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="429">
-          <caret line="85" column="29" lean-forward="true" selection-start-line="85" selection-start-column="29" selection-end-line="85" selection-end-column="29" />
+        <state relative-caret-position="348">
+          <caret line="590" column="44" lean-forward="false" selection-start-line="590" selection-start-column="44" selection-end-line="590" selection-end-column="44" />
           <folding>
             <element signature="e#4348#4683#0" expanded="true" />
             <element signature="e#4682#4683#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/logo/activity/BookmarkActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="584" column="55" lean-forward="true" selection-start-line="584" selection-start-column="55" selection-end-line="584" selection-end-column="55" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>

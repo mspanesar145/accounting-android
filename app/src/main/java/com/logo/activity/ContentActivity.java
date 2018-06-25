@@ -587,8 +587,8 @@ public class ContentActivity extends LogoActivity {
                 holder.tvContentTitle.setText(jsonObject.getString("title"));
 
                 String text = jsonObject.getString("content");
-                if (text.length()>24) {
-                    text=text.substring(0,24);
+                if (text.length()>20) {
+                    text=text.substring(0,20);
                 }
                 text += "...";
                 holder.tvContentDesc.setText(Html.fromHtml(text+"<font color='#76daff'> <u>Read More</u></font>"));
