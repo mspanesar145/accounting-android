@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -66,11 +67,12 @@ public class HomeActivity extends LogoActivity {
     LinearLayout llBottomProfile, llBottomMyAccount, llBottomContent, llBottomBookmark;
     ImageSectionAdapter imageSectionAdapter;
     VideoSectionAdapter videoSectionAdapter;
-    ImageView ivHomeBanner, ivSearch;
+    ImageView ivHomeBanner;
     TextView homeTxt,listTxt,profile,settings,logout,tvUsernmae;
     RoundedImageView riv_imageView;
     TextView tvViewAllVideo, tvViewAllImage, txtFeedback, txtBookmark;
-    EditText etSearch;
+    SearchView searchView;
+    ImageView ivLogo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +119,6 @@ public class HomeActivity extends LogoActivity {
         scrollHome = (ScrollView) findViewById(R.id.scroll_home);
         tvViewAllVideo = (TextView) findViewById(R.id.view_all_video);
         tvViewAllImage = (TextView) findViewById(R.id.view_all_image);
-        etSearch = (EditText) findViewById(R.id.et_search);
         txtFeedback = (TextView) findViewById(R.id.feedback);
         txtBookmark = (TextView) findViewById(R.id.bookmark_txt);
 
@@ -127,16 +128,41 @@ public class HomeActivity extends LogoActivity {
         llBottomBookmark.setOnClickListener(bottomBookmarkListener);
 
         listTxt = (TextView) findViewById(R.id.list_txt);
-        ivSearch = (ImageView) findViewById(R.id.iv_search);
+        ivLogo = (ImageView) findViewById(R.id.iv_logo);
+        searchView = (SearchView) findViewById(R.id.search_view);
+        EditText searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(getResources().getColor(R.color.white));
 
-        ivSearch.setOnClickListener(new View.OnClickListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (!TextUtils.isEmpty(newText.trim())) {
+                    new SearchDocumentsProcess().execute(userManager.getUser().getUserId()
+                            , newText.trim());
+                } else {
+                    new SearchDocumentsProcess().execute(userManager.getUser().getUserId());
+                }
+                return false;
+            }
+        });
+
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (etSearch.getVisibility() == View.VISIBLE){
-                    etSearch.setVisibility(View.GONE);
-                } else {
-                    etSearch.setVisibility(View.VISIBLE);
-                }
+                ivLogo.setVisibility(View.GONE);
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                ivLogo.setVisibility(View.VISIBLE);
+                return false;
             }
         });
 
@@ -206,28 +232,6 @@ public class HomeActivity extends LogoActivity {
         Glide.with(context).load(user.getPicture()).into(riv_imageView);
         // Get user data
         new UserDocumentsProcess().execute(user.getUserId());
-
-        etSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!TextUtils.isEmpty(etSearch.getText().toString().trim())) {
-                    new SearchDocumentsProcess().execute(userManager.getUser().getUserId()
-                            , etSearch.getText().toString().trim());
-                } else {
-                    new SearchDocumentsProcess().execute(userManager.getUser().getUserId());
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
     }
 
     View.OnClickListener bottomProfileListener = new View.OnClickListener() {

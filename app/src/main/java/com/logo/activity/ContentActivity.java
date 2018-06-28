@@ -81,10 +81,10 @@ public class ContentActivity extends LogoActivity {
     String comment;
     Long selectedDocumentId;
     Integer selectedDocumentOverallRating;
-    EditText etSearch;
     HashMap<String, Object> map;
     private JSONArray mArray;
-    ImageView ivSearch;
+    SearchView searchView;
+    ImageView ivLogo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +112,6 @@ public class ContentActivity extends LogoActivity {
         llBottomMyAccount = (LinearLayout) findViewById(R.id.ll_my_settings);
         llBottomProfile = (LinearLayout) findViewById(R.id.ll_bottom_profile);
         llBottomHome = (LinearLayout) findViewById(R.id.ll_bottom_home);
-        etSearch = (EditText) findViewById(R.id.et_search);
         txtFeedback = (TextView) findViewById(R.id.feedback);
         llBottomBookmark = (LinearLayout) findViewById(R.id.ll_bottom_bookmark);
         txtBookmark = (TextView) findViewById(R.id.bookmark_txt);
@@ -122,18 +121,59 @@ public class ContentActivity extends LogoActivity {
         llBottomHome.setOnClickListener(bottomHomeListener);
         llBottomBookmark.setOnClickListener(bottomBookmarkListener);
 
-        ivSearch = (ImageView) findViewById(R.id.iv_search);
+        ivLogo = (ImageView) findViewById(R.id.iv_logo);
+        searchView = (SearchView) findViewById(R.id.search_view);
+        EditText searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(getResources().getColor(R.color.white));
 
-        ivSearch.setOnClickListener(new View.OnClickListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onClick(View v) {
-                if (etSearch.getVisibility() == View.VISIBLE){
-                    etSearch.setVisibility(View.GONE);
-                } else {
-                    etSearch.setVisibility(View.VISIBLE);
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (null != map) {
+                    if (map.containsKey("title")) {
+                        map.remove("title");
+                    }
+                    if (!TextUtils.isEmpty(newText.trim())) {
+                        map.put("title", newText.trim());
+                    }
+                    new SearchProcess().execute(map);
                 }
+                return false;
             }
         });
+
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ivLogo.setVisibility(View.GONE);
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                ivLogo.setVisibility(View.VISIBLE);
+                return false;
+            }
+        });
+
+
+
+//        ivSearch.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (etSearch.getVisibility() == View.VISIBLE){
+//                    etSearch.setVisibility(View.GONE);
+//                } else {
+//                    etSearch.setVisibility(View.VISIBLE);
+//                }
+//            }
+//        });
 
         txtBookmark.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,33 +235,6 @@ public class ContentActivity extends LogoActivity {
                 finish();
             }
         });
-
-        etSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (null != map) {
-                    if (map.containsKey("title")) {
-                        map.remove("title");
-                    }
-                    if (!TextUtils.isEmpty(etSearch.getText().toString().trim())) {
-                        map.put("title", etSearch.getText().toString().trim());
-                    }
-                    new SearchProcess().execute(map);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-
 
         User user = userManager.getUser();
 
