@@ -29,20 +29,28 @@ public class SplashActivity extends LogoActivity {
         coreManager = logoApplication .getCoreManager();
         userManager = coreManager.getUserManager();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        if(userManager.isUserExist()){
+            startActivity(new Intent(SplashActivity.this,HomeActivity.class));
+            finish();
+        }else{
+            startActivity(new Intent(SplashActivity.this,LoginActivity.class));
+            finish();
+        }
 
-                if(userManager.isUserExist()){
-                    startActivity(new Intent(SplashActivity.this,HomeActivity.class));
-                    finish();
-                }else{
-                    startActivity(new Intent(SplashActivity.this,LoginActivity.class));
-                    finish();
-                }
-            }
-
-        }, 2000);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//                if(userManager.isUserExist()){
+//                    startActivity(new Intent(SplashActivity.this,HomeActivity.class));
+//                    finish();
+//                }else{
+//                    startActivity(new Intent(SplashActivity.this,LoginActivity.class));
+//                    finish();
+//                }
+//            }
+//
+//        }, 2000);
 
     }
 }
