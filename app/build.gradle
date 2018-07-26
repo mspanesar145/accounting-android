@@ -19,6 +19,16 @@ android {
             debuggable true
         }
     }
+    flavorDimensions "api"
+    productFlavors {
+        staging {
+            dimension "api"
+        }
+
+        production {
+            dimension "api"
+        }
+    }
 
     useLibrary 'org.apache.http.legacy'
 }
